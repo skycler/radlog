@@ -5,9 +5,13 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 export interface RideFilters {
-  bike_id?: string;
+  bike_ids?: string[];
   date_from?: string;
   date_to?: string;
+  distance_from?: number;
+  distance_to?: number;
+  elevation_from?: number;
+  elevation_to?: number;
   sort_by?: "date" | "distance_km" | "elevation_gain_m";
   sort_order?: "asc" | "desc";
 }
@@ -16,14 +20,26 @@ export async function getRides(filters: RideFilters = {}) {
   const supabase = await createClient();
   let query = supabase.from("rides").select("*, bikes(name)");
 
-  if (filters.bike_id) {
-    query = query.eq("bike_id", filters.bike_id);
+  if (filters.bike_ids && filters.bike_ids.length > 0) {
+    query = query.in("bike_id", filters.bike_ids);
   }
   if (filters.date_from) {
     query = query.gte("date", filters.date_from);
   }
   if (filters.date_to) {
     query = query.lte("date", filters.date_to);
+  }
+  if (filters.distance_from !== undefined) {
+    query = query.gte("distance_km", filters.distance_from);
+  }
+  if (filters.distance_to !== undefined) {
+    query = query.lte("distance_km", filters.distance_to);
+  }
+  if (filters.elevation_from !== undefined) {
+    query = query.gte("elevation_gain_m", filters.elevation_from);
+  }
+  if (filters.elevation_to !== undefined) {
+    query = query.lte("elevation_gain_m", filters.elevation_to);
   }
 
   const sortBy = filters.sort_by ?? "date";

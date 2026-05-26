@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { PlusIcon } from "@/components/ui/icons";
 import { getBikes } from "@/features/bikes/actions";
 import { getRides } from "@/features/rides/actions";
-import { RideFilters } from "@/features/rides/components/ride-filters";
 import { RideList } from "@/features/rides/components/ride-list";
 
 const VALID_SORT = ["date", "distance_km", "elevation_gain_m"] as const;
@@ -15,9 +14,30 @@ export default async function RidesPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const sp = await searchParams;
-  const bikeId = typeof sp.bike === "string" ? sp.bike : undefined;
+
+  const bikeIds =
+    typeof sp.bikes === "string" && sp.bikes
+      ? sp.bikes.split(",").filter(Boolean)
+      : undefined;
   const dateFrom = typeof sp.from === "string" ? sp.from : undefined;
   const dateTo = typeof sp.to === "string" ? sp.to : undefined;
+  const distFrom =
+    typeof sp.dist_from === "string" && sp.dist_from
+      ? parseFloat(sp.dist_from)
+      : undefined;
+  const distTo =
+    typeof sp.dist_to === "string" && sp.dist_to
+      ? parseFloat(sp.dist_to)
+      : undefined;
+  const elevFrom =
+    typeof sp.elev_from === "string" && sp.elev_from
+      ? parseFloat(sp.elev_from)
+      : undefined;
+  const elevTo =
+    typeof sp.elev_to === "string" && sp.elev_to
+      ? parseFloat(sp.elev_to)
+      : undefined;
+
   const sortRaw = typeof sp.sort === "string" ? sp.sort : "date";
   const sortBy = VALID_SORT.includes(sortRaw as SortField)
     ? (sortRaw as SortField)
@@ -25,8 +45,28 @@ export default async function RidesPage({
   const sortOrder =
     typeof sp.order === "string" && sp.order === "asc" ? "asc" : "desc";
 
+  const hasFilters = !!(
+    bikeIds ||
+    dateFrom ||
+    dateTo ||
+    distFrom !== undefined ||
+    distTo !== undefined ||
+    elevFrom !== undefined ||
+    elevTo !== undefined
+  );
+
   const [rides, bikes] = await Promise.all([
-    getRides({ bike_id: bikeId, date_from: dateFrom, date_to: dateTo, sort_by: sortBy, sort_order: sortOrder }),
+    getRides({
+      bike_ids: bikeIds,
+      date_from: dateFrom,
+      date_to: dateTo,
+      distance_from: distFrom,
+      distance_to: distTo,
+      elevation_from: elevFrom,
+      elevation_to: elevTo,
+      sort_by: sortBy,
+      sort_order: sortOrder,
+    }),
     getBikes(),
   ]);
 
@@ -42,13 +82,10 @@ export default async function RidesPage({
           <PlusIcon />
         </Link>
       </div>
-      <div className="mt-4">
+      <div className="mt-6">
         <Suspense>
-          <RideFilters bikes={bikes} />
+          <RideList rides={rides} bikes={bikes} filtered={hasFilters} />
         </Suspense>
-      </div>
-      <div className="mt-4">
-        <RideList rides={rides} filtered={!!(bikeId || dateFrom || dateTo)} />
       </div>
     </div>
   );

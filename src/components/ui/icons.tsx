@@ -33,3 +33,35 @@ export function UserIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function SortAscIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-3.5 w-3.5" {...props}>
+      <path fillRule="evenodd" d="M8 3.5a.75.75 0 01.75.75v5.94l1.72-1.72a.75.75 0 111.06 1.06l-3 3a.75.75 0 01-1.06 0l-3-3a.75.75 0 111.06-1.06l1.72 1.72V4.25A.75.75 0 018 3.5z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+export function SortDescIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-3.5 w-3.5" {...props}>
+      <path fillRule="evenodd" d="M8 12.5a.75.75 0 01-.75-.75V5.81L5.53 7.53a.75.75 0 01-1.06-1.06l3-3a.75.75 0 011.06 0l3 3a.75.75 0 11-1.06 1.06L8.75 5.81v5.94a.75.75 0 01-.75.75z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+export function FilterIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-3.5 w-3.5" {...props}>
+      <path d="M14 2H2l5 5.882V12l2 1V7.882L14 2z" />
+    </svg>
+  );
+}
+
+export function ChevronDownIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-3.5 w-3.5" {...props}>
+      <path fillRule="evenodd" d="M4.22 6.22a.75.75 0 011.06 0L8 8.94l2.72-2.72a.75.75 0 111.06 1.06l-3.25 3.25a.75.75 0 01-1.06 0L4.22 7.28a.75.75 0 010-1.06z" clipRule="evenodd" />
+    </svg>
+  );
+}
