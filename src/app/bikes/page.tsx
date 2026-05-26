@@ -1,8 +1,22 @@
-export default function BikesPage() {
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { getBikes } from "@/features/bikes/actions";
+import { BikeList } from "@/features/bikes/components/bike-list";
+
+export default async function BikesPage() {
+  const bikes = await getBikes();
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <h1 className="text-2xl font-bold">Bikes</h1>
-      <p className="mt-2 text-foreground/60">Your bikes will appear here.</p>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Bikes</h1>
+        <Link href="/bikes/new">
+          <Button>Add bike</Button>
+        </Link>
+      </div>
+      <div className="mt-6">
+        <BikeList bikes={bikes} />
+      </div>
     </div>
   );
 }
