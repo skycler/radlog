@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { PencilIcon, TrashIcon } from "@/components/ui/icons";
+import { PencilIcon, TrashIcon, WrenchIcon } from "@/components/ui/icons";
 import { deleteBike } from "../actions";
 
 interface Bike {
@@ -49,6 +49,13 @@ export function BikeList({ bikes }: { bikes: Bike[] }) {
           <li key={bike.id} className="flex items-center justify-between px-4 py-3">
             <span className="font-medium text-foreground">{bike.name}</span>
             <div className="flex gap-1">
+              <Link
+                href={`/bikes/${bike.id}/maintenance`}
+                className="rounded-md p-1.5 text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors"
+                aria-label={`Maintenance history for ${bike.name}`}
+              >
+                <WrenchIcon />
+              </Link>
               <Link
                 href={`/bikes/${bike.id}/edit`}
                 className="rounded-md p-1.5 text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors"
