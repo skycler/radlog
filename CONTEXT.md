@@ -6,11 +6,11 @@ A manual ride-logging webapp for passionate cyclists. Radlog is intentionally mi
 
 ## Glossary
 
-- **Ride** — a single cycling activity logged by a user. Contains date, distance, elevation gain, bike used, personal note, and material comments.
+- **Ride** — a single cycling activity logged by a user. Contains date, distance, elevation gain, bike used, personal note, and maintenance note.
 - **Bike** — a bicycle owned by a user. Users maintain a list of their bikes and select one per ride.
 - **Personal note** — free-text description of the ride (route, feelings, conditions, etc.).
-- **Material comment** — notes about equipment condition observed during a ride (e.g. "chain needs replacement", "new tires grip well"). Tied to both the ride and the bike.
-- **Maintenance history** — the chronological view of all material comments for a specific bike.
+- **Maintenance note** — notes about equipment condition observed during a ride (e.g. "chain needs replacement", "new tires grip well"). Tied to both the ride and the bike.
+- **Maintenance history** — the chronological view of all maintenance notes for a specific bike.
 
 ## Users
 
@@ -27,7 +27,7 @@ A manual ride-logging webapp for passionate cyclists. Radlog is intentionally mi
 | Elevation gain   | number     | yes      |
 | Bike used        | reference  | yes      |
 | Personal note    | text       | no       |
-| Material comment | text       | no       |
+| Maintenance note | text       | no       |
 
 ## Core operations (v1)
 

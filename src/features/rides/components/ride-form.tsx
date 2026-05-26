@@ -17,7 +17,7 @@ interface RideFormProps {
     elevation_gain_m?: number;
     bike_id?: string;
     personal_note?: string | null;
-    material_comment?: string | null;
+    maintenance_note?: string | null;
   };
   submitLabel: string;
 }
@@ -144,14 +144,14 @@ export function RideForm({ action, bikes, defaultValues = {}, submitLabel }: Rid
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="material_comment" className="block text-sm font-medium text-foreground">
-          Material comment <span className="text-foreground/40">(optional)</span>
+        <label htmlFor="maintenance_note" className="block text-sm font-medium text-foreground">
+          Maintenance note <span className="text-foreground/40">(optional)</span>
         </label>
         <textarea
-          id="material_comment"
-          name="material_comment"
+          id="maintenance_note"
+          name="maintenance_note"
           rows={2}
-          defaultValue={defaultValues.material_comment ?? ""}
+          defaultValue={defaultValues.maintenance_note ?? ""}
           className="block w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground/40 focus:border-foreground/50 focus:outline-none focus:ring-1 focus:ring-foreground/50"
           placeholder="Any notes about gear, tires, bike condition?"
         />

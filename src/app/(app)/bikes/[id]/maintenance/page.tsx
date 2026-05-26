@@ -27,7 +27,7 @@ export default async function MaintenancePage({
       {entries.length === 0 ? (
         <div className="rounded-md border border-foreground/10 px-4 py-8 text-center">
           <p className="text-foreground/60">
-            No maintenance notes yet. Add a material comment to a ride with this
+            No maintenance notes yet. Add a maintenance note to a ride with this
             bike to start tracking.
           </p>
         </div>
@@ -47,7 +47,7 @@ export default async function MaintenancePage({
                   View ride
                 </Link>
               </div>
-              <p className="mt-1 text-foreground">{entry.material_comment}</p>
+              <p className="mt-1 text-foreground">{entry.maintenance_note}</p>
             </li>
           ))}
         </ul>

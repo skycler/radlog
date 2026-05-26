@@ -66,7 +66,7 @@ export type Database = {
           distance_km: number
           elevation_gain_m: number
           id: string
-          material_comment: string | null
+          maintenance_note: string | null
           personal_note: string | null
           updated_at: string
           user_id: string
@@ -78,7 +78,7 @@ export type Database = {
           distance_km: number
           elevation_gain_m: number
           id?: string
-          material_comment?: string | null
+          maintenance_note?: string | null
           personal_note?: string | null
           updated_at?: string
           user_id: string
@@ -90,7 +90,7 @@ export type Database = {
           distance_km?: number
           elevation_gain_m?: number
           id?: string
-          material_comment?: string | null
+          maintenance_note?: string | null
           personal_note?: string | null
           updated_at?: string
           user_id?: string
