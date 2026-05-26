@@ -16,7 +16,7 @@ interface Ride {
   bikes: { name: string } | null;
 }
 
-export function RideList({ rides }: { rides: Ride[] }) {
+export function RideList({ rides, filtered }: { rides: Ride[]; filtered?: boolean }) {
   const [deleteTarget, setDeleteTarget] = useState<Ride | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,6 +30,13 @@ export function RideList({ rides }: { rides: Ride[] }) {
   }
 
   if (rides.length === 0) {
+    if (filtered) {
+      return (
+        <div className="rounded-md border border-foreground/10 px-4 py-8 text-center">
+          <p className="text-foreground/60">No rides match your filters.</p>
+        </div>
+      );
+    }
     return (
       <div className="rounded-md border border-foreground/10 px-4 py-8 text-center">
         <p className="text-foreground/60">No rides yet.</p>

@@ -4,13 +4,33 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-export async function getRides() {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("rides")
-    .select("*, bikes(name)")
-    .order("date", { ascending: false });
+export interface RideFilters {
+  bike_id?: string;
+  date_from?: string;
+  date_to?: string;
+  sort_by?: "date" | "distance_km" | "elevation_gain_m";
+  sort_order?: "asc" | "desc";
+}
 
+export async function getRides(filters: RideFilters = {}) {
+  const supabase = await createClient();
+  let query = supabase.from("rides").select("*, bikes(name)");
+
+  if (filters.bike_id) {
+    query = query.eq("bike_id", filters.bike_id);
+  }
+  if (filters.date_from) {
+    query = query.gte("date", filters.date_from);
+  }
+  if (filters.date_to) {
+    query = query.lte("date", filters.date_to);
+  }
+
+  const sortBy = filters.sort_by ?? "date";
+  const ascending = (filters.sort_order ?? "desc") === "asc";
+  query = query.order(sortBy, { ascending });
+
+  const { data, error } = await query;
   if (error) throw error;
   return data;
 }
