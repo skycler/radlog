@@ -91,7 +91,7 @@ export async function getRideStatsBetweenDates(
     .select("date, distance_km, elevation_gain_m")
     .eq("bike_id", bikeId)
     .gte("date", earlier)
-    .lte("date", later);
+    .lt("date", later);
 
   if (error) throw error;
 
