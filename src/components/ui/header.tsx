@@ -31,6 +31,9 @@ export function Header({ user, onLogout }: HeaderProps) {
               >
                 Bikes
               </Link>
+              <span className="hidden sm:inline text-sm text-foreground/50">
+                {user.email}
+              </span>
               <button
                 onClick={onLogout}
                 className="rounded-md px-3 py-1.5 text-sm text-foreground/70 hover:text-foreground transition-colors"
