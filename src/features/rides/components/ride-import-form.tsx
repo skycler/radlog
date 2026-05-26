@@ -259,7 +259,7 @@ export function RideImportForm({ bikes }: { bikes: Bike[] }) {
       const newBikeNames = uniqueBikeNames.filter(
         (n) => effectiveBikeMap[n] === "__new__",
       );
-      let allBikeMap = { ...effectiveBikeMap };
+      const allBikeMap = { ...effectiveBikeMap };
 
       if (newBikeNames.length > 0) {
         const { bikes: created, error } =
