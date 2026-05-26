@@ -49,20 +49,18 @@ export function MaintenanceList({
   );
 
   function toggle(id: string) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else if (next.size < 2) {
-        next.add(id);
-      } else {
-        const [first] = next;
-        next.delete(first);
-        next.add(id);
-      }
-      fetchStats(next);
-      return next;
-    });
+    const next = new Set(selected);
+    if (next.has(id)) {
+      next.delete(id);
+    } else if (next.size < 2) {
+      next.add(id);
+    } else {
+      const [first] = next;
+      next.delete(first);
+      next.add(id);
+    }
+    setSelected(next);
+    fetchStats(next);
   }
 
   return (
