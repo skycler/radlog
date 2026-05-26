@@ -64,6 +64,20 @@ export async function updateBike(id: string, formData: FormData) {
   redirect("/bikes");
 }
 
+export async function getMaintenanceHistory(bikeId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("rides")
+    .select("id, date, material_comment")
+    .eq("bike_id", bikeId)
+    .not("material_comment", "is", null)
+    .neq("material_comment", "")
+    .order("date", { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
 export async function deleteBike(id: string) {
   const supabase = await createClient();
 
