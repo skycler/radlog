@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { DarkModeToggle } from "./dark-mode-toggle";
+import { ProfileDropdown } from "./profile-dropdown";
 
 interface HeaderProps {
   user?: { email?: string } | null;
@@ -31,18 +32,12 @@ export function Header({ user, onLogout }: HeaderProps) {
               >
                 Bikes
               </Link>
-              <span className="hidden sm:inline text-sm text-foreground/50">
-                {user.email}
-              </span>
-              <button
-                onClick={onLogout}
-                className="rounded-md px-3 py-1.5 text-sm text-foreground/70 hover:text-foreground transition-colors"
-              >
-                Log out
-              </button>
             </>
           )}
           <DarkModeToggle />
+          {user && onLogout && (
+            <ProfileDropdown email={user.email ?? ""} onLogout={onLogout} />
+          )}
         </div>
       </div>
     </header>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { PencilIcon, TrashIcon } from "@/components/ui/icons";
 import { deleteRide } from "../actions";
 
 interface Ride {
@@ -69,22 +70,24 @@ export function RideList({ rides }: { rides: Ride[] }) {
                   {ride.personal_note || "—"}
                 </td>
                 <td className="px-4 py-2 text-right whitespace-nowrap">
-                  <div className="flex justify-end gap-2">
-                    <Link href={`/rides/${ride.id}/edit`}>
-                      <Button variant="secondary" className="text-xs px-3 py-1">
-                        Edit
-                      </Button>
+                  <div className="flex justify-end gap-1">
+                    <Link
+                      href={`/rides/${ride.id}/edit`}
+                      className="rounded-md p-1.5 text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors"
+                      aria-label={`Edit ride from ${ride.date}`}
+                    >
+                      <PencilIcon />
                     </Link>
-                    <Button
-                      variant="danger"
-                      className="text-xs px-3 py-1"
+                    <button
+                      className="rounded-md p-1.5 text-foreground/50 hover:text-red-500 hover:bg-red-500/5 transition-colors"
+                      aria-label={`Delete ride from ${ride.date}`}
                       onClick={() => {
                         setError(null);
                         setDeleteTarget(ride);
                       }}
                     >
-                      Delete
-                    </Button>
+                      <TrashIcon />
+                    </button>
                   </div>
                 </td>
               </tr>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { PencilIcon, TrashIcon } from "@/components/ui/icons";
 import { deleteBike } from "../actions";
 
 interface Bike {
@@ -47,22 +48,24 @@ export function BikeList({ bikes }: { bikes: Bike[] }) {
         {bikes.map((bike) => (
           <li key={bike.id} className="flex items-center justify-between px-4 py-3">
             <span className="font-medium text-foreground">{bike.name}</span>
-            <div className="flex gap-2">
-              <Link href={`/bikes/${bike.id}/edit`}>
-                <Button variant="secondary" className="text-xs px-3 py-1">
-                  Edit
-                </Button>
+            <div className="flex gap-1">
+              <Link
+                href={`/bikes/${bike.id}/edit`}
+                className="rounded-md p-1.5 text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors"
+                aria-label={`Edit ${bike.name}`}
+              >
+                <PencilIcon />
               </Link>
-              <Button
-                variant="danger"
-                className="text-xs px-3 py-1"
+              <button
+                className="rounded-md p-1.5 text-foreground/50 hover:text-red-500 hover:bg-red-500/5 transition-colors"
+                aria-label={`Delete ${bike.name}`}
                 onClick={() => {
                   setError(null);
                   setDeleteTarget(bike);
                 }}
               >
-                Delete
-              </Button>
+                <TrashIcon />
+              </button>
             </div>
           </li>
         ))}
