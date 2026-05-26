@@ -14,6 +14,7 @@ export default async function BikesPage() {
             href="/bikes/new"
             className="rounded-md p-1.5 text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors"
             aria-label="Add bike"
+            title="Add bike"
           >
             <PlusIcon />
           </Link>

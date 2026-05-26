@@ -79,6 +79,7 @@ export default async function RidesPage({
             href="/rides/import"
             className="rounded-md p-1.5 text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors"
             aria-label="Import rides"
+            title="Import rides"
           >
             <UploadIcon />
           </Link>
@@ -86,6 +87,7 @@ export default async function RidesPage({
             href="/rides/new"
             className="rounded-md p-1.5 text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors"
             aria-label="Add ride"
+            title="Add ride"
           >
             <PlusIcon />
           </Link>

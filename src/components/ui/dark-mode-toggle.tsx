@@ -24,7 +24,7 @@ function subscribe(onStoreChange: () => void) {
   return () => observer.disconnect();
 }
 
-export function DarkModeToggle() {
+export function useDarkMode() {
   const dark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const toggle = useCallback(() => {
@@ -33,10 +33,17 @@ export function DarkModeToggle() {
     localStorage.setItem("theme", next ? "dark" : "light");
   }, []);
 
+  return { dark, toggle };
+}
+
+export function DarkModeToggle() {
+  const { dark, toggle } = useDarkMode();
+
   return (
     <button
       onClick={toggle}
       aria-label="Toggle dark mode"
+      title="Toggle dark mode"
       className="rounded-md p-2 text-foreground/70 hover:text-foreground transition-colors"
     >
       {dark ? (

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { DarkModeToggle } from "./dark-mode-toggle";
+import { MapPinIcon, BikeIcon } from "./icons";
 import { ProfileDropdown } from "./profile-dropdown";
 
 interface HeaderProps {
@@ -17,24 +17,25 @@ export function Header({ user, onLogout }: HeaderProps) {
           Radlog
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {user && (
             <>
               <Link
                 href="/rides"
-                className="rounded-md px-3 py-1.5 text-sm text-foreground/70 hover:text-foreground transition-colors"
+                className="rounded-md p-2 text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors"
+                title="Rides"
               >
-                Rides
+                <MapPinIcon />
               </Link>
               <Link
                 href="/bikes"
-                className="rounded-md px-3 py-1.5 text-sm text-foreground/70 hover:text-foreground transition-colors"
+                className="rounded-md p-2 text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors"
+                title="Bikes"
               >
-                Bikes
+                <BikeIcon />
               </Link>
             </>
           )}
-          <DarkModeToggle />
           {user && onLogout && (
             <ProfileDropdown email={user.email ?? ""} onLogout={onLogout} />
           )}
