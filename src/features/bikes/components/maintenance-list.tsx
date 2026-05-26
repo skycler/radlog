@@ -30,15 +30,25 @@ export function MaintenanceList({
 
   const fetchStats = useCallback(
     (ids: Set<string>) => {
-      if (ids.size !== 2) {
+      if (ids.size === 0) {
         setStats(null);
         return;
       }
       const selectedEntries = entries.filter((e) => ids.has(e.id));
-      const [a, b] = selectedEntries;
+      let dateA: string;
+      let dateB: string;
+      if (ids.size === 1) {
+        dateA = selectedEntries[0].date;
+        // Tomorrow so that `lt` includes today
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateB = tomorrow.toISOString().split("T")[0];
+      } else {
+        [dateA, dateB] = [selectedEntries[0].date, selectedEntries[1].date];
+      }
       startTransition(async () => {
         try {
-          const result = await getRideStatsBetweenDates(bikeId, a.date, b.date);
+          const result = await getRideStatsBetweenDates(bikeId, dateA, dateB);
           setStats(result);
         } catch {
           setStats(null);
@@ -66,11 +76,13 @@ export function MaintenanceList({
   return (
     <div className="space-y-4">
       {/* Summary panel */}
-      {selected.size === 2 && (
+      {selected.size >= 1 && (
         <div className="rounded-md border border-foreground/20 bg-foreground/[0.02] px-4 py-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-foreground/70">
-              Between selected events
+              {selected.size === 1
+                ? "Since selected event"
+                : "Between selected events"}
             </h2>
             <button
               onClick={() => {
@@ -108,9 +120,9 @@ export function MaintenanceList({
       )}
 
       {/* Hint */}
-      {entries.length >= 2 && selected.size < 2 && (
+      {entries.length >= 2 && selected.size === 0 && (
         <p className="text-xs text-foreground/40">
-          Select two entries to compare activity between them.
+          Select an entry to see stats since then, or two entries to compare.
         </p>
       )}
 
