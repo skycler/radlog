@@ -32,7 +32,7 @@ export default async function EditRidePage({
           elevation_gain_m: ride.elevation_gain_m,
           bike_id: ride.bike_id,
           personal_note: ride.personal_note,
-          material_comment: ride.material_comment,
+          maintenance_note: ride.maintenance_note,
         }}
         submitLabel="Save changes"
       />

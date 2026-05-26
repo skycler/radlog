@@ -68,10 +68,10 @@ export async function getMaintenanceHistory(bikeId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("rides")
-    .select("id, date, material_comment")
+    .select("id, date, maintenance_note")
     .eq("bike_id", bikeId)
-    .not("material_comment", "is", null)
-    .neq("material_comment", "")
+    .not("maintenance_note", "is", null)
+    .neq("maintenance_note", "")
     .order("date", { ascending: false });
 
   if (error) throw error;

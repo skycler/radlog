@@ -74,7 +74,7 @@ export async function createRide(formData: FormData) {
   const distance_km = parseFloat(formData.get("distance_km") as string);
   const elevation_gain_m = parseFloat(formData.get("elevation_gain_m") as string);
   const personal_note = (formData.get("personal_note") as string)?.trim() || null;
-  const material_comment = (formData.get("material_comment") as string)?.trim() || null;
+  const maintenance_note = (formData.get("maintenance_note") as string)?.trim() || null;
 
   if (!bike_id || !date || isNaN(distance_km) || isNaN(elevation_gain_m)) {
     return { error: "All required fields must be filled" };
@@ -87,7 +87,7 @@ export async function createRide(formData: FormData) {
     distance_km,
     elevation_gain_m,
     personal_note,
-    material_comment,
+    maintenance_note,
   });
 
   if (error) return { error: error.message };
@@ -104,7 +104,7 @@ export async function updateRide(id: string, formData: FormData) {
   const distance_km = parseFloat(formData.get("distance_km") as string);
   const elevation_gain_m = parseFloat(formData.get("elevation_gain_m") as string);
   const personal_note = (formData.get("personal_note") as string)?.trim() || null;
-  const material_comment = (formData.get("material_comment") as string)?.trim() || null;
+  const maintenance_note = (formData.get("maintenance_note") as string)?.trim() || null;
 
   if (!bike_id || !date || isNaN(distance_km) || isNaN(elevation_gain_m)) {
     return { error: "All required fields must be filled" };
@@ -118,7 +118,7 @@ export async function updateRide(id: string, formData: FormData) {
       distance_km,
       elevation_gain_m,
       personal_note,
-      material_comment,
+      maintenance_note,
     })
     .eq("id", id);
 
