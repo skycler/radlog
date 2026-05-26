@@ -7,4 +7,5 @@ export { FormLayout } from "./form-layout";
 export { DarkModeToggle } from "./dark-mode-toggle";
 export { Header } from "./header";
 export { ProfileDropdown } from "./profile-dropdown";
-export { PlusIcon, PencilIcon, TrashIcon, UserIcon } from "./icons";
+export { PlusIcon, PencilIcon, TrashIcon, UserIcon, SortAscIcon, SortDescIcon, FilterIcon, ChevronDownIcon } from "./icons";
+export { Popover } from "./popover";
