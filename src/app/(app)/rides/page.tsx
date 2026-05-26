@@ -1,8 +1,22 @@
-export default function RidesPage() {
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { getRides } from "@/features/rides/actions";
+import { RideList } from "@/features/rides/components/ride-list";
+
+export default async function RidesPage() {
+  const rides = await getRides();
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <h1 className="text-2xl font-bold">Rides</h1>
-      <p className="mt-2 text-foreground/60">Your rides will appear here.</p>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Rides</h1>
+        <Link href="/rides/new">
+          <Button>Add ride</Button>
+        </Link>
+      </div>
+      <div className="mt-6">
+        <RideList rides={rides} />
+      </div>
     </div>
   );
 }
