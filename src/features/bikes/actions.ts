@@ -78,6 +78,38 @@ export async function getMaintenanceHistory(bikeId: string) {
   return data;
 }
 
+export async function getRideStatsBetweenDates(
+  bikeId: string,
+  dateFrom: string,
+  dateTo: string,
+) {
+  const supabase = await createClient();
+  const [earlier, later] = dateFrom < dateTo ? [dateFrom, dateTo] : [dateTo, dateFrom];
+
+  const { data, error } = await supabase
+    .from("rides")
+    .select("date, distance_km, elevation_gain_m")
+    .eq("bike_id", bikeId)
+    .gte("date", earlier)
+    .lte("date", later);
+
+  if (error) throw error;
+
+  const rides = data ?? [];
+  const totalDistance = rides.reduce((sum, r) => sum + Number(r.distance_km), 0);
+  const totalElevation = rides.reduce((sum, r) => sum + Number(r.elevation_gain_m), 0);
+  const days = Math.abs(
+    (new Date(later).getTime() - new Date(earlier).getTime()) / (1000 * 60 * 60 * 24),
+  );
+
+  return {
+    days: Math.round(days),
+    rideCount: rides.length,
+    totalDistanceKm: Math.round(totalDistance * 10) / 10,
+    totalElevationM: Math.round(totalElevation),
+  };
+}
+
 export async function deleteBike(id: string) {
   const supabase = await createClient();
 
