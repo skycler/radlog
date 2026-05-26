@@ -53,6 +53,7 @@ export function BikeList({ bikes }: { bikes: Bike[] }) {
                 href={`/bikes/${bike.id}/maintenance`}
                 className="rounded-md p-1.5 text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors"
                 aria-label={`Maintenance history for ${bike.name}`}
+                title="Maintenance"
               >
                 <WrenchIcon />
               </Link>
@@ -60,12 +61,14 @@ export function BikeList({ bikes }: { bikes: Bike[] }) {
                 href={`/bikes/${bike.id}/edit`}
                 className="rounded-md p-1.5 text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors"
                 aria-label={`Edit ${bike.name}`}
+                title="Edit"
               >
                 <PencilIcon />
               </Link>
               <button
                 className="rounded-md p-1.5 text-foreground/50 hover:text-red-500 hover:bg-red-500/5 transition-colors"
                 aria-label={`Delete ${bike.name}`}
+                title="Delete"
                 onClick={() => {
                   setError(null);
                   setDeleteTarget(bike);

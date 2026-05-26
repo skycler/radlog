@@ -129,6 +129,7 @@ export function RideList({
                     onClick={() => toggleSort("date")}
                     className={`transition-colors ${isSorted("date") ? activeClass : inactiveClass}`}
                     aria-label="Sort by date"
+                    title="Sort by date"
                   >
                     {isSorted("date") && sortOrder === "asc" ? <SortAscIcon /> : <SortDescIcon />}
                   </button>
@@ -137,6 +138,7 @@ export function RideList({
                       <span
                         className={`transition-colors cursor-pointer ${hasDateFilter ? activeClass : inactiveClass}`}
                         aria-label="Filter by date"
+                        title="Filter by date"
                       >
                         <FilterIcon />
                       </span>
@@ -168,6 +170,7 @@ export function RideList({
                       <span
                         className={`transition-colors cursor-pointer ${hasBikeFilter ? activeClass : inactiveClass}`}
                         aria-label="Filter by bike"
+                        title="Filter by bike"
                       >
                         <ChevronDownIcon />
                       </span>
@@ -211,6 +214,7 @@ export function RideList({
                     onClick={() => toggleSort("distance_km")}
                     className={`transition-colors ${isSorted("distance_km") ? activeClass : inactiveClass}`}
                     aria-label="Sort by distance"
+                    title="Sort by distance"
                   >
                     {isSorted("distance_km") && sortOrder === "asc" ? <SortAscIcon /> : <SortDescIcon />}
                   </button>
@@ -219,6 +223,7 @@ export function RideList({
                       <span
                         className={`transition-colors cursor-pointer ${hasDistanceFilter ? activeClass : inactiveClass}`}
                         aria-label="Filter by distance"
+                        title="Filter by distance"
                       >
                         <FilterIcon />
                       </span>
@@ -250,6 +255,7 @@ export function RideList({
                     onClick={() => toggleSort("elevation_gain_m")}
                     className={`transition-colors ${isSorted("elevation_gain_m") ? activeClass : inactiveClass}`}
                     aria-label="Sort by elevation"
+                    title="Sort by elevation"
                   >
                     {isSorted("elevation_gain_m") && sortOrder === "asc" ? <SortAscIcon /> : <SortDescIcon />}
                   </button>
@@ -258,6 +264,7 @@ export function RideList({
                       <span
                         className={`transition-colors cursor-pointer ${hasElevationFilter ? activeClass : inactiveClass}`}
                         aria-label="Filter by elevation"
+                        title="Filter by elevation"
                       >
                         <FilterIcon />
                       </span>
@@ -308,12 +315,14 @@ export function RideList({
                         href={`/rides/${ride.id}/edit`}
                         className="rounded-md p-1.5 text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors"
                         aria-label={`Edit ride from ${ride.date}`}
+                        title="Edit"
                       >
                         <PencilIcon />
                       </Link>
                       <button
                         className="rounded-md p-1.5 text-foreground/50 hover:text-red-500 hover:bg-red-500/5 transition-colors"
                         aria-label={`Delete ride from ${ride.date}`}
+                        title="Delete"
                         onClick={() => {
                           setError(null);
                           setDeleteTarget(ride);
