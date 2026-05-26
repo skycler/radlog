@@ -13,6 +13,13 @@ Issues and PRDs for this repo live as GitHub issues. Use the `gh` CLI for all op
 
 Infer the repo from `git remote -v` — `gh` does this automatically when run inside a clone.
 
+## Issue lifecycle
+
+- Every bug or task **must** have a GitHub issue before work begins.
+- **PR opened** → move the issue to `ready-for-human` (awaiting review/merge).
+- **PR merged** → close the issue with a comment referencing the PR.
+- Use `Closes #N` in PR descriptions so GitHub auto-closes on merge when possible.
+
 ## When a skill says "publish to the issue tracker"
 
 Create a GitHub issue.
