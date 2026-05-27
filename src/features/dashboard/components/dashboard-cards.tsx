@@ -118,6 +118,25 @@ export function DashboardCards({ rides, year }: Props) {
           }
         )
       ),
+      Plot.tip(
+        rides,
+        Plot.pointerX(
+          Plot.binX(
+            { y: "count" },
+            {
+              x: "distance_km",
+              thresholds: (data: number[]) => {
+                const max = Math.max(...data);
+                const bins: number[] = [];
+                for (let i = 0; i <= max + 10; i += 10) bins.push(i);
+                return bins;
+              },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              title: (d: any) => `${Math.round(d.x1)}–${Math.round(d.x2)} km: ${d.length} ride${d.length !== 1 ? "s" : ""}`,
+            }
+          )
+        )
+      ),
       Plot.ruleY([0]),
     ],
   }), [rides]);
@@ -135,6 +154,12 @@ export function DashboardCards({ rides, year }: Props) {
         fill: ACCENT,
         fillOpacity: 0.7,
       }),
+      Plot.tip(monthlyData, Plot.pointerX({
+        x: "label",
+        y: "km",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        title: (d: any) => `${d.label}: ${Math.round(d.km)} km\n${d.rides} ride${d.rides !== 1 ? "s" : ""}\n${Math.round(d.elevation).toLocaleString()} m elev`,
+      })),
       Plot.ruleY([0]),
     ],
   }), [monthlyData]);
@@ -154,8 +179,6 @@ export function DashboardCards({ rides, year }: Props) {
         y: "dailyKm",
         fill: SECONDARY,
         fillOpacity: 0.4,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        title: (d: any) => `${d.date.toISOString().slice(0, 10)}: ${Math.round(d.dailyKm)} km`,
       }),
       Plot.lineY(timelineData, {
         x: "date",
@@ -163,6 +186,12 @@ export function DashboardCards({ rides, year }: Props) {
         stroke: ACCENT,
         strokeWidth: 2,
       }),
+      Plot.tip(timelineData, Plot.pointerX({
+        x: "date",
+        y: "cumulativeKm",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.cumulativeKm).toLocaleString()} km total${d.dailyKm > 0 ? `\n${Math.round(d.dailyKm)} km today` : ""}`,
+      })),
       Plot.ruleY([0]),
     ],
   }), [dailyBars, timelineData]);
@@ -280,6 +309,12 @@ function ScatterLogLog({ rides }: { rides: DashboardRide[] }) {
         fillOpacity: 0.6,
         r: 3,
       }),
+      Plot.tip(validRides, Plot.pointer({
+        x: "distance_km",
+        y: "elevation_gain_m",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        title: (d: any) => `${d.distance_km.toFixed(1)} km\n${Math.round(d.elevation_gain_m)} m elev`,
+      })),
       Plot.line(fitLine, {
         x: "distance_km",
         y: "elevation_gain_m",
