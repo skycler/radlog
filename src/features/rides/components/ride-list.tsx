@@ -47,6 +47,7 @@ export function RideList({
   const sortBy = searchParams.get("sort") ?? "date";
   const sortOrder = searchParams.get("order") ?? "desc";
   const selectedBikes = searchParams.get("bikes")?.split(",").filter(Boolean) ?? [];
+  const noteFilter = searchParams.get("note") ?? "";
 
   const update = useCallback(
     (updates: Record<string, string>) => {
@@ -106,6 +107,7 @@ export function RideList({
   const hasDistanceFilter = searchParams.has("dist_from") || searchParams.has("dist_to");
   const hasElevationFilter = searchParams.has("elev_from") || searchParams.has("elev_to");
   const hasBikeFilter = selectedBikes.length > 0;
+  const hasNoteFilter = noteFilter.length > 0;
 
   const activeClass = "text-accent-secondary";
   const inactiveClass = "text-foreground/30 hover:text-foreground/60";
@@ -288,7 +290,32 @@ export function RideList({
                 </div>
               </th>
 
-              <th className="hidden sm:table-cell px-4 py-2 font-medium">Note</th>
+              <th className="hidden sm:table-cell px-4 py-2 font-medium">
+                <div className="flex items-center gap-1">
+                  Note
+                  <Popover
+                    trigger={
+                      <span
+                        className={`transition-colors cursor-pointer ${hasNoteFilter ? activeClass : inactiveClass}`}
+                        aria-label="Search notes"
+                        title="Search notes"
+                      >
+                        <FilterIcon />
+                      </span>
+                    }
+                  >
+                    {(close) => (
+                      <NoteSearch
+                        value={noteFilter}
+                        onApply={(v) => {
+                          update({ note: v });
+                          close();
+                        }}
+                      />
+                    )}
+                  </Popover>
+                </div>
+              </th>
               <th className="px-4 py-2 font-medium text-right" />
             </tr>
           </thead>
@@ -399,6 +426,49 @@ function RangeFilter({
             setFrom("");
             setTo("");
             onApply("", "");
+          }}
+          className="rounded px-2 py-1 text-xs text-foreground/40 hover:text-foreground transition-colors"
+        >
+          Clear
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function NoteSearch({
+  value,
+  onApply,
+}: {
+  value: string;
+  onApply: (v: string) => void;
+}) {
+  const [search, setSearch] = useState(value);
+
+  return (
+    <div className="flex flex-col gap-2">
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") onApply(search);
+        }}
+        placeholder="Search notes..."
+        className="rounded border border-foreground/10 bg-background px-2 py-1 text-sm text-foreground"
+        autoFocus
+      />
+      <div className="flex gap-2">
+        <button
+          onClick={() => onApply(search)}
+          className="flex-1 rounded bg-foreground/10 px-2 py-1 text-xs text-foreground hover:bg-foreground/20 transition-colors"
+        >
+          Apply
+        </button>
+        <button
+          onClick={() => {
+            setSearch("");
+            onApply("");
           }}
           className="rounded px-2 py-1 text-xs text-foreground/40 hover:text-foreground transition-colors"
         >

@@ -37,6 +37,7 @@ export default async function RidesPage({
     typeof sp.elev_to === "string" && sp.elev_to
       ? parseFloat(sp.elev_to)
       : undefined;
+  const noteSearch = typeof sp.note === "string" && sp.note ? sp.note : undefined;
 
   const sortRaw = typeof sp.sort === "string" ? sp.sort : "date";
   const sortBy = VALID_SORT.includes(sortRaw as SortField)
@@ -52,7 +53,8 @@ export default async function RidesPage({
     distFrom !== undefined ||
     distTo !== undefined ||
     elevFrom !== undefined ||
-    elevTo !== undefined
+    elevTo !== undefined ||
+    noteSearch
   );
 
   const [rides, bikes] = await Promise.all([
@@ -64,6 +66,7 @@ export default async function RidesPage({
       distance_to: distTo,
       elevation_from: elevFrom,
       elevation_to: elevTo,
+      note_search: noteSearch,
       sort_by: sortBy,
       sort_order: sortOrder,
     }),
