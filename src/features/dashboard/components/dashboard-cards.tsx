@@ -229,7 +229,7 @@ export function DashboardCards({ rides, year }: Props) {
     marginLeft: 55,
     marginRight: 20,
     marginTop: 0,
-    x: { label: null, type: "time", domain: xDomain, ticks: "month", tickFormat: () => "", tickSize: 3 },
+    x: { label: null, type: "time", domain: xDomain, axis: "top", ticks: "month", tickFormat: () => "", tickSize: 3 },
     y: { label: null, grid: true, reverse: true },
     marks: [
       Plot.rectY(dailyBars, {
