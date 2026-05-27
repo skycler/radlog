@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface PlotChartProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -10,10 +10,24 @@ interface PlotChartProps {
 
 export function PlotChart({ buildOptions, className = "" }: PlotChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setWidth(entry.contentRect.width);
+      }
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || width === undefined) return;
 
     let cancelled = false;
 
@@ -22,6 +36,7 @@ export function PlotChart({ buildOptions, className = "" }: PlotChartProps) {
       const options = buildOptions(Plot);
       const plot = Plot.plot({
         ...options,
+        width,
         style: {
           background: "transparent",
           color: "currentColor",
@@ -35,7 +50,7 @@ export function PlotChart({ buildOptions, className = "" }: PlotChartProps) {
     return () => {
       cancelled = true;
     };
-  }, [buildOptions]);
+  }, [buildOptions, width]);
 
   return <div ref={containerRef} className={className} />;
 }

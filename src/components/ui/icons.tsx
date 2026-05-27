@@ -140,3 +140,28 @@ export function ChartBarIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function MaximizeIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" {...props}>
+      <path d="M13.28 3.22a.75.75 0 010 1.06L10.56 7h2.69a.75.75 0 010 1.5H8.5a.75.75 0 01-.75-.75V3a.75.75 0 011.5 0v2.69l2.72-2.72a.75.75 0 011.06 0z" />
+      <path d="M6.72 16.78a.75.75 0 010-1.06L9.44 13H6.75a.75.75 0 010-1.5h4.75a.75.75 0 01.75.75V17a.75.75 0 01-1.5 0v-2.69l-2.72 2.72a.75.75 0 01-1.06 0z" />
+    </svg>
+  );
+}
+
+export function MinimizeIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" {...props}>
+      <path d="M3.28 7.78a.75.75 0 010-1.06l2.72-2.72H3.31a.75.75 0 010-1.5H8a.75.75 0 01.75.75v4.69a.75.75 0 01-1.5 0V5.25L4.53 7.97a.75.75 0 01-1.06-.19zM16.72 12.22a.75.75 0 010 1.06l-2.72 2.72h2.69a.75.75 0 010 1.5H12a.75.75 0 01-.75-.75v-4.69a.75.75 0 011.5 0v2.69l2.72-2.72a.75.75 0 011.06 0z" />
+    </svg>
+  );
+}
+
+export function XMarkIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" {...props}>
+      <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+    </svg>
+  );
+}

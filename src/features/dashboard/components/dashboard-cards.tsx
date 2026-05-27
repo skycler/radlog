@@ -2,6 +2,7 @@
 
 import { useMemo, useCallback } from "react";
 import { PlotChart } from "./plot-chart";
+import { ChartCard } from "./chart-card";
 import type { DashboardRide } from "../actions";
 
 interface Props {
@@ -192,34 +193,27 @@ export function DashboardCards({ rides, year }: Props) {
 
       {/* Row 2: Monthly + Histogram */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="rounded-md border border-foreground/10 p-4">
-          <h3 className="text-sm font-semibold text-foreground/60 mb-3">Monthly distance</h3>
+        <ChartCard title="Monthly distance">
           <PlotChart buildOptions={buildMonthly} />
-        </div>
-        <div className="rounded-md border border-foreground/10 p-4">
-          <h3 className="text-sm font-semibold text-foreground/60 mb-3">Distance distribution</h3>
+        </ChartCard>
+        <ChartCard title="Distance distribution">
           <PlotChart buildOptions={buildHistogram} />
-        </div>
+        </ChartCard>
       </div>
 
       {/* Row 3: Scatter + Boxplots */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="rounded-md border border-foreground/10 p-4">
-          <h3 className="text-sm font-semibold text-foreground/60 mb-3">Distance vs elevation</h3>
+        <ChartCard title="Distance vs elevation">
           <ScatterLogLog rides={rides} />
-        </div>
-        <div className="rounded-md border border-foreground/10 p-4">
-          <h3 className="text-sm font-semibold text-foreground/60 mb-3">Distribution</h3>
-          <div className="grid grid-cols-2 gap-2">
-            <PlotChart buildOptions={buildBoxplotKm} />
-            <PlotChart buildOptions={buildBoxplotElev} />
-          </div>
-        </div>
+        </ChartCard>
+        <ChartCard title="Distribution" className="grid grid-cols-2 gap-2">
+          <PlotChart buildOptions={buildBoxplotKm} />
+          <PlotChart buildOptions={buildBoxplotElev} />
+        </ChartCard>
       </div>
 
       {/* Card 6: Cumulative + daily */}
-      <div className="rounded-md border border-foreground/10 p-4">
-        <h3 className="text-sm font-semibold text-foreground/60 mb-3">Year overview</h3>
+      <ChartCard title="Year overview">
         <PlotChart buildOptions={buildTimeline} />
         <div className="flex gap-4 mt-2 text-xs text-foreground/50 justify-center">
           <span className="flex items-center gap-1">
@@ -231,7 +225,7 @@ export function DashboardCards({ rides, year }: Props) {
             Daily km
           </span>
         </div>
-      </div>
+      </ChartCard>
     </div>
   );
 }
