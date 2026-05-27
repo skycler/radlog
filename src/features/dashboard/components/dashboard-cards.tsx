@@ -56,7 +56,8 @@ export function DashboardCards({ rides, year }: Props) {
 
   const timelineData = useMemo(() => {
     const start = new Date(year, 0, 1);
-    const end = new Date(year, 11, 31);
+    const now = new Date();
+    const end = year === now.getFullYear() ? now : new Date(year, 11, 31);
     const dayMap = new Map<string, number>();
     for (const r of rides) {
       dayMap.set(r.date, (dayMap.get(r.date) || 0) + r.distance_km);
@@ -203,11 +204,12 @@ export function DashboardCards({ rides, year }: Props) {
     x: { label: null, type: "time", domain: [new Date(year, 0, 1), new Date(year, 11, 31)] },
     y: { label: "daily km", grid: true },
     marks: [
-      Plot.barY(dailyBars, {
-        x: "date",
+      Plot.rectY(dailyBars, {
+        x1: (d: { date: Date }) => d.date,
+        x2: (d: { date: Date }) => new Date(d.date.getTime() + 86400000),
         y: "dailyKm",
         fill: SECONDARY,
-        fillOpacity: 0.6,
+        fillOpacity: 0.7,
       }),
       Plot.tip(dailyBars, Plot.pointerX({
         x: "date",
@@ -227,12 +229,6 @@ export function DashboardCards({ rides, year }: Props) {
     x: { label: null, type: "time", domain: [new Date(year, 0, 1), new Date(year, 11, 31)] },
     y: { label: "cumulative km", grid: true },
     marks: [
-      Plot.areaY(timelineData, {
-        x: "date",
-        y: "cumulativeKm",
-        fill: ACCENT,
-        fillOpacity: 0.1,
-      }),
       Plot.lineY(timelineData, {
         x: "date",
         y: "cumulativeKm",
@@ -273,6 +269,22 @@ export function DashboardCards({ rides, year }: Props) {
         ))}
       </div>
 
+      {/* Year overview: Daily + Cumulative (stacked) */}
+      <ChartCard title="Year overview">
+        <PlotChart buildOptions={buildDailyBars} />
+        <PlotChart buildOptions={buildCumulative} />
+        <div className="flex gap-4 mt-2 text-xs text-foreground/50 justify-center">
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SECONDARY, opacity: 0.6 }} />
+            Daily km
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-0.5" style={{ backgroundColor: ACCENT }} />
+            Cumulative km
+          </span>
+        </div>
+      </ChartCard>
+
       {/* Row 2: Monthly + Histogram */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <ChartCard title="Monthly distance">
@@ -293,22 +305,6 @@ export function DashboardCards({ rides, year }: Props) {
           <PlotChart buildOptions={buildBoxplotElev} />
         </ChartCard>
       </div>
-
-      {/* Card 6: Daily + Cumulative (stacked) */}
-      <ChartCard title="Year overview">
-        <PlotChart buildOptions={buildDailyBars} />
-        <PlotChart buildOptions={buildCumulative} />
-        <div className="flex gap-4 mt-2 text-xs text-foreground/50 justify-center">
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SECONDARY, opacity: 0.6 }} />
-            Daily km
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-0.5" style={{ backgroundColor: ACCENT }} />
-            Cumulative km
-          </span>
-        </div>
-      </ChartCard>
     </div>
   );
 }
