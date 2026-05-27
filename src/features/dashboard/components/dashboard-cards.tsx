@@ -195,18 +195,43 @@ export function DashboardCards({ rides, year }: Props) {
   const dailyBars = useMemo(() => timelineData.filter((d) => d.dailyKm > 0), [timelineData]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buildTimeline = useCallback((Plot: any) => ({
-    height: 300,
+  const buildDailyBars = useCallback((Plot: any) => ({
+    height: 120,
     marginLeft: 50,
     marginRight: 50,
-    x: { label: null, type: "time" },
-    y: { label: "cumulative km", grid: true, axis: "left" },
+    marginBottom: 5,
+    x: { label: null, type: "time", domain: [new Date(year, 0, 1), new Date(year, 11, 31)] },
+    y: { label: "daily km", grid: true },
     marks: [
       Plot.barY(dailyBars, {
         x: "date",
         y: "dailyKm",
         fill: SECONDARY,
-        fillOpacity: 0.4,
+        fillOpacity: 0.6,
+      }),
+      Plot.tip(dailyBars, Plot.pointerX({
+        x: "date",
+        y: "dailyKm",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.dailyKm)} km`,
+      })),
+      Plot.ruleY([0]),
+    ],
+  }), [dailyBars, year]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const buildCumulative = useCallback((Plot: any) => ({
+    height: 200,
+    marginLeft: 50,
+    marginRight: 50,
+    x: { label: null, type: "time", domain: [new Date(year, 0, 1), new Date(year, 11, 31)] },
+    y: { label: "cumulative km", grid: true },
+    marks: [
+      Plot.areaY(timelineData, {
+        x: "date",
+        y: "cumulativeKm",
+        fill: ACCENT,
+        fillOpacity: 0.1,
       }),
       Plot.lineY(timelineData, {
         x: "date",
@@ -218,11 +243,11 @@ export function DashboardCards({ rides, year }: Props) {
         x: "date",
         y: "cumulativeKm",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.cumulativeKm).toLocaleString()} km total${d.dailyKm > 0 ? `\n${Math.round(d.dailyKm)} km today` : ""}`,
+        title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.cumulativeKm).toLocaleString()} km total`,
       })),
       Plot.ruleY([0]),
     ],
-  }), [dailyBars, timelineData]);
+  }), [timelineData, year]);
 
   if (rides.length === 0) {
     return (
@@ -269,17 +294,18 @@ export function DashboardCards({ rides, year }: Props) {
         </ChartCard>
       </div>
 
-      {/* Card 6: Cumulative + daily */}
+      {/* Card 6: Daily + Cumulative (stacked) */}
       <ChartCard title="Year overview">
-        <PlotChart buildOptions={buildTimeline} />
+        <PlotChart buildOptions={buildDailyBars} />
+        <PlotChart buildOptions={buildCumulative} />
         <div className="flex gap-4 mt-2 text-xs text-foreground/50 justify-center">
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SECONDARY, opacity: 0.6 }} />
+            Daily km
+          </span>
           <span className="flex items-center gap-1">
             <span className="inline-block w-3 h-0.5" style={{ backgroundColor: ACCENT }} />
             Cumulative km
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SECONDARY, opacity: 0.4 }} />
-            Daily km
           </span>
         </div>
       </ChartCard>
