@@ -5,6 +5,20 @@ import { PlotChart } from "./plot-chart";
 import { ChartCard } from "./chart-card";
 import type { DashboardRide } from "../actions";
 
+function computeBoxStats(values: number[]) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const n = sorted.length;
+  if (n === 0) return null;
+  const q1 = sorted[Math.floor(n * 0.25)];
+  const median = sorted[Math.floor(n * 0.5)];
+  const q3 = sorted[Math.floor(n * 0.75)];
+  const iqr = q3 - q1;
+  const lower = Math.max(sorted[0], q1 - 1.5 * iqr);
+  const upper = Math.min(sorted[n - 1], q3 + 1.5 * iqr);
+  const outliers = sorted.filter((v) => v < lower || v > upper);
+  return { q1, median, q3, iqr, lower, upper, min: sorted[0], max: sorted[n - 1], outliers };
+}
+
 interface Props {
   rides: DashboardRide[];
   year: number;
@@ -60,14 +74,13 @@ export function DashboardCards({ rides, year }: Props) {
     return days;
   }, [rides, year]);
 
+  const kmStats = useMemo(() => computeBoxStats(rides.map((r) => r.distance_km)), [rides]);
+  const elevStats = useMemo(() => computeBoxStats(rides.map((r) => r.elevation_gain_m)), [rides]);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buildBoxplotKm = useCallback((Plot: any) => ({
-    height: 200,
-    marginLeft: 40,
-    marginRight: 10,
-    x: { label: null, domain: ["km"], padding: 0.4 },
-    y: { label: "km", grid: true },
-    marks: [
+  const buildBoxplotKm = useCallback((Plot: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const marks: any[] = [
       Plot.boxY(rides, {
         x: () => "km",
         y: "distance_km",
@@ -75,17 +88,32 @@ export function DashboardCards({ rides, year }: Props) {
         fillOpacity: 0.3,
         stroke: ACCENT,
       }),
-    ],
-  }), [rides]);
+    ];
+    if (kmStats) {
+      const statPoints = [
+        { x: "km", y: kmStats.lower, label: `Whisker: ${Math.round(kmStats.lower)} km` },
+        { x: "km", y: kmStats.q1, label: `Q1: ${Math.round(kmStats.q1)} km` },
+        { x: "km", y: kmStats.median, label: `Median: ${Math.round(kmStats.median)} km` },
+        { x: "km", y: kmStats.q3, label: `Q3: ${Math.round(kmStats.q3)} km` },
+        { x: "km", y: kmStats.upper, label: `Whisker: ${Math.round(kmStats.upper)} km` },
+        ...kmStats.outliers.map((v) => ({ x: "km", y: v, label: `Outlier: ${Math.round(v)} km` })),
+      ];
+      marks.push(Plot.tip(statPoints, Plot.pointer({ x: "x", y: "y", title: "label" })));
+    }
+    return {
+      height: 200,
+      marginLeft: 40,
+      marginRight: 10,
+      x: { label: null, domain: ["km"], padding: 0.4 },
+      y: { label: "km", grid: true },
+      marks,
+    };
+  }, [rides, kmStats]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buildBoxplotElev = useCallback((Plot: any) => ({
-    height: 200,
-    marginLeft: 40,
-    marginRight: 10,
-    x: { label: null, domain: ["m"], padding: 0.4 },
-    y: { label: "m", grid: true },
-    marks: [
+  const buildBoxplotElev = useCallback((Plot: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const marks: any[] = [
       Plot.boxY(rides, {
         x: () => "m",
         y: "elevation_gain_m",
@@ -93,8 +121,27 @@ export function DashboardCards({ rides, year }: Props) {
         fillOpacity: 0.3,
         stroke: SECONDARY,
       }),
-    ],
-  }), [rides]);
+    ];
+    if (elevStats) {
+      const statPoints = [
+        { x: "m", y: elevStats.lower, label: `Whisker: ${Math.round(elevStats.lower)} m` },
+        { x: "m", y: elevStats.q1, label: `Q1: ${Math.round(elevStats.q1)} m` },
+        { x: "m", y: elevStats.median, label: `Median: ${Math.round(elevStats.median)} m` },
+        { x: "m", y: elevStats.q3, label: `Q3: ${Math.round(elevStats.q3)} m` },
+        { x: "m", y: elevStats.upper, label: `Whisker: ${Math.round(elevStats.upper)} m` },
+        ...elevStats.outliers.map((v) => ({ x: "m", y: v, label: `Outlier: ${Math.round(v)} m` })),
+      ];
+      marks.push(Plot.tip(statPoints, Plot.pointer({ x: "x", y: "y", title: "label" })));
+    }
+    return {
+      height: 200,
+      marginLeft: 40,
+      marginRight: 10,
+      x: { label: null, domain: ["m"], padding: 0.4 },
+      y: { label: "m", grid: true },
+      marks,
+    };
+  }, [rides, elevStats]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const buildHistogram = useCallback((Plot: any) => ({
@@ -116,25 +163,6 @@ export function DashboardCards({ rides, year }: Props) {
               return bins;
             },
           }
-        )
-      ),
-      Plot.tip(
-        rides,
-        Plot.pointerX(
-          Plot.binX(
-            { y: "count" },
-            {
-              x: "distance_km",
-              thresholds: (data: number[]) => {
-                const max = Math.max(...data);
-                const bins: number[] = [];
-                for (let i = 0; i <= max + 10; i += 10) bins.push(i);
-                return bins;
-              },
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              title: (d: any) => `${Math.round(d.x1)}–${Math.round(d.x2)} km: ${d.length} ride${d.length !== 1 ? "s" : ""}`,
-            }
-          )
         )
       ),
       Plot.ruleY([0]),
