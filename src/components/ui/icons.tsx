@@ -144,8 +144,7 @@ export function ChartBarIcon(props: IconProps) {
 export function MaximizeIcon(props: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" {...props}>
-      <path d="M13.28 3.22a.75.75 0 010 1.06L10.56 7h2.69a.75.75 0 010 1.5H8.5a.75.75 0 01-.75-.75V3a.75.75 0 011.5 0v2.69l2.72-2.72a.75.75 0 011.06 0z" />
-      <path d="M6.72 16.78a.75.75 0 010-1.06L9.44 13H6.75a.75.75 0 010-1.5h4.75a.75.75 0 01.75.75V17a.75.75 0 01-1.5 0v-2.69l-2.72 2.72a.75.75 0 01-1.06 0z" />
+      <path d="M13.5 3h3.25a.75.75 0 01.75.75V7a.75.75 0 01-1.5 0V5.06l-3.22 3.22a.75.75 0 11-1.06-1.06L14.94 4H13.5a.75.75 0 010-1.5zM6.5 17H3.25a.75.75 0 01-.75-.75V13a.75.75 0 011.5 0v1.94l3.22-3.22a.75.75 0 111.06 1.06L5.06 16H6.5a.75.75 0 010 1.5z" />
     </svg>
   );
 }
