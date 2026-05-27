@@ -206,7 +206,7 @@ export function DashboardCards({ rides, year }: Props) {
     x: { type: "time", domain: xDomain, axis: null },
     y: { label: null, grid: true },
     marks: [
-      Plot.axisX({ anchor: "bottom", ticks: "month", tickSize: 4, tickPadding: 3, label: null }),
+      Plot.axisX({ anchor: "bottom", ticks: "month", tickSize: 4, tickPadding: 3, label: null, tickFormat: "%b" }),
       Plot.lineY(timelineData, {
         x: "date",
         y: "cumulativeKm",
