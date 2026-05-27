@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MapPinIcon, BikeIcon } from "./icons";
+import { MapPinIcon, BikeIcon, ChartBarIcon } from "./icons";
 import { ProfileDropdown } from "./profile-dropdown";
 
 interface HeaderProps {
@@ -14,6 +14,7 @@ export function Header({ user, onLogout }: HeaderProps) {
   const pathname = usePathname();
   const isRides = pathname.startsWith("/rides");
   const isBikes = pathname.startsWith("/bikes");
+  const isDashboard = pathname.startsWith("/dashboard");
 
   const baseClass = "rounded-md p-2 transition-colors";
   const activeClass = `${baseClass} text-accent bg-accent/10`;
@@ -29,6 +30,13 @@ export function Header({ user, onLogout }: HeaderProps) {
         <div className="flex items-center gap-1">
           {user && (
             <>
+              <Link
+                href="/dashboard"
+                className={isDashboard ? activeClass : inactiveClass}
+                title="Dashboard"
+              >
+                <ChartBarIcon />
+              </Link>
               <Link
                 href="/rides"
                 className={isRides ? activeClass : inactiveClass}

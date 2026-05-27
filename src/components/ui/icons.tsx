@@ -132,3 +132,35 @@ export function MoonIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function ChartBarIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" {...props}>
+      <path d="M15.5 2A1.5 1.5 0 0014 3.5v13a1.5 1.5 0 001.5 1.5h1a1.5 1.5 0 001.5-1.5v-13A1.5 1.5 0 0016.5 2h-1zM9.5 6A1.5 1.5 0 008 7.5v9A1.5 1.5 0 009.5 18h1a1.5 1.5 0 001.5-1.5v-9A1.5 1.5 0 0010.5 6h-1zM3.5 10A1.5 1.5 0 002 11.5v5A1.5 1.5 0 003.5 18h1A1.5 1.5 0 006 16.5v-5A1.5 1.5 0 004.5 10h-1z" />
+    </svg>
+  );
+}
+
+export function MaximizeIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" {...props}>
+      <path d="M13.5 3h3.25a.75.75 0 01.75.75V7a.75.75 0 01-1.5 0V5.06l-3.22 3.22a.75.75 0 11-1.06-1.06L14.94 4H13.5a.75.75 0 010-1.5zM6.5 17H3.25a.75.75 0 01-.75-.75V13a.75.75 0 011.5 0v1.94l3.22-3.22a.75.75 0 111.06 1.06L5.06 16H6.5a.75.75 0 010 1.5z" />
+    </svg>
+  );
+}
+
+export function MinimizeIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" {...props}>
+      <path d="M3.28 7.78a.75.75 0 010-1.06l2.72-2.72H3.31a.75.75 0 010-1.5H8a.75.75 0 01.75.75v4.69a.75.75 0 01-1.5 0V5.25L4.53 7.97a.75.75 0 01-1.06-.19zM16.72 12.22a.75.75 0 010 1.06l-2.72 2.72h2.69a.75.75 0 010 1.5H12a.75.75 0 01-.75-.75v-4.69a.75.75 0 011.5 0v2.69l2.72-2.72a.75.75 0 011.06 0z" />
+    </svg>
+  );
+}
+
+export function XMarkIcon(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" {...props}>
+      <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+    </svg>
+  );
+}
