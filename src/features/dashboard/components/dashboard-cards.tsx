@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
-import * as Plot from "@observablehq/plot";
+import { useMemo, useCallback } from "react";
 import { PlotChart } from "./plot-chart";
 import type { DashboardRide } from "../actions";
 
@@ -11,6 +10,9 @@ interface Props {
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const ACCENT = "var(--accent)";
+const SECONDARY = "var(--accent-secondary)";
 
 export function DashboardCards({ rides, year }: Props) {
   const stats = useMemo(() => {
@@ -37,16 +39,13 @@ export function DashboardCards({ rides, year }: Props) {
     return months;
   }, [rides]);
 
-  // Card 6: cumulative + daily data
   const timelineData = useMemo(() => {
     const start = new Date(year, 0, 1);
     const end = new Date(year, 11, 31);
     const dayMap = new Map<string, number>();
     for (const r of rides) {
-      const key = r.date;
-      dayMap.set(key, (dayMap.get(key) || 0) + r.distance_km);
+      dayMap.set(r.date, (dayMap.get(r.date) || 0) + r.distance_km);
     }
-
     const days: { date: Date; dailyKm: number; cumulativeKm: number }[] = [];
     let cumulative = 0;
     const current = new Date(start);
@@ -54,19 +53,106 @@ export function DashboardCards({ rides, year }: Props) {
       const key = current.toISOString().slice(0, 10);
       const daily = dayMap.get(key) || 0;
       cumulative += daily;
-      days.push({
-        date: new Date(current),
-        dailyKm: daily,
-        cumulativeKm: cumulative,
-      });
+      days.push({ date: new Date(current), dailyKm: daily, cumulativeKm: cumulative });
       current.setDate(current.getDate() + 1);
     }
     return days;
   }, [rides, year]);
 
-  const accentColor = "var(--accent)";
-  const secondaryColor = "var(--accent-secondary)";
-  const mutedColor = "color-mix(in srgb, currentColor 30%, transparent)";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const buildBoxplots = useCallback((Plot: any) => ({
+    height: 200,
+    marginLeft: 60,
+    x: { label: null },
+    y: { label: null, grid: true },
+    marks: [
+      Plot.boxY(rides, {
+        x: () => "Distance (km)",
+        y: "distance_km",
+        fill: ACCENT,
+        fillOpacity: 0.3,
+        stroke: ACCENT,
+      }),
+      Plot.boxY(rides, {
+        x: () => "Elevation (m)",
+        y: "elevation_gain_m",
+        fill: SECONDARY,
+        fillOpacity: 0.3,
+        stroke: SECONDARY,
+      }),
+    ],
+  }), [rides]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const buildHistogram = useCallback((Plot: any) => ({
+    height: 200,
+    marginLeft: 40,
+    x: { label: "km" },
+    y: { label: "rides", grid: true },
+    marks: [
+      Plot.rectY(
+        rides,
+        Plot.binX(
+          { y: "count", fill: () => ACCENT, fillOpacity: () => 0.6 },
+          {
+            x: "distance_km",
+            thresholds: (data: number[]) => {
+              const max = Math.max(...data);
+              const bins: number[] = [];
+              for (let i = 0; i <= max + 10; i += 10) bins.push(i);
+              return bins;
+            },
+          }
+        )
+      ),
+      Plot.ruleY([0]),
+    ],
+  }), [rides]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const buildMonthly = useCallback((Plot: any) => ({
+    height: 200,
+    marginLeft: 50,
+    x: { label: null, domain: MONTHS, padding: 0.3 },
+    y: { label: "km", grid: true },
+    marks: [
+      Plot.barY(monthlyData, {
+        x: "label",
+        y: "km",
+        fill: ACCENT,
+        fillOpacity: 0.7,
+      }),
+      Plot.ruleY([0]),
+    ],
+  }), [monthlyData]);
+
+  const dailyBars = useMemo(() => timelineData.filter((d) => d.dailyKm > 0), [timelineData]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const buildTimeline = useCallback((Plot: any) => ({
+    height: 300,
+    marginLeft: 50,
+    marginRight: 50,
+    x: { label: null, type: "time" },
+    y: { label: "cumulative km", grid: true, axis: "left" },
+    marks: [
+      Plot.barY(dailyBars, {
+        x: "date",
+        y: "dailyKm",
+        fill: SECONDARY,
+        fillOpacity: 0.4,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        title: (d: any) => `${d.date.toISOString().slice(0, 10)}: ${Math.round(d.dailyKm)} km`,
+      }),
+      Plot.lineY(timelineData, {
+        x: "date",
+        y: "cumulativeKm",
+        stroke: ACCENT,
+        strokeWidth: 2,
+      }),
+      Plot.ruleY([0]),
+    ],
+  }), [dailyBars, timelineData]);
 
   if (rides.length === 0) {
     return (
@@ -94,147 +180,39 @@ export function DashboardCards({ rides, year }: Props) {
 
       {/* Row 2: Boxplots + Histogram */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* Card 2: Boxplots */}
         <div className="rounded-md border border-foreground/10 p-4">
           <h3 className="text-sm font-semibold text-foreground/60 mb-3">Distribution</h3>
-          <PlotChart
-            options={{
-              height: 200,
-              marginLeft: 60,
-              x: { label: null },
-              y: { label: null, grid: true },
-              color: { range: [accentColor, secondaryColor] },
-              marks: [
-                Plot.boxY(rides, {
-                  x: () => "Distance (km)",
-                  y: "distance_km",
-                  fill: accentColor,
-                  fillOpacity: 0.3,
-                  stroke: accentColor,
-                }),
-                Plot.boxY(rides, {
-                  x: () => "Elevation (m)",
-                  y: "elevation_gain_m",
-                  fill: secondaryColor,
-                  fillOpacity: 0.3,
-                  stroke: secondaryColor,
-                }),
-              ],
-            }}
-          />
+          <PlotChart buildOptions={buildBoxplots} />
         </div>
-
-        {/* Card 3: Histogram */}
         <div className="rounded-md border border-foreground/10 p-4">
           <h3 className="text-sm font-semibold text-foreground/60 mb-3">Distance distribution</h3>
-          <PlotChart
-            options={{
-              height: 200,
-              marginLeft: 40,
-              x: { label: "km" },
-              y: { label: "rides", grid: true },
-              marks: [
-                Plot.rectY(
-                  rides,
-                  Plot.binX(
-                    { y: "count", fill: () => accentColor, fillOpacity: () => 0.6 },
-                    {
-                      x: "distance_km",
-                      thresholds: (data: number[]) => {
-                        const max = Math.max(...data);
-                        const bins: number[] = [];
-                        for (let i = 0; i <= max + 10; i += 10) bins.push(i);
-                        return bins;
-                      },
-                    }
-                  )
-                ),
-                Plot.ruleY([0]),
-              ],
-            }}
-          />
+          <PlotChart buildOptions={buildHistogram} />
         </div>
       </div>
 
       {/* Row 3: Monthly sums + Scatter */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* Card 4: Monthly sums */}
         <div className="rounded-md border border-foreground/10 p-4">
           <h3 className="text-sm font-semibold text-foreground/60 mb-3">Monthly distance</h3>
-          <PlotChart
-            options={{
-              height: 200,
-              marginLeft: 50,
-              x: { label: null, domain: MONTHS, padding: 0.3 },
-              y: { label: "km", grid: true },
-              marks: [
-                Plot.barY(monthlyData, {
-                  x: "label",
-                  y: "km",
-                  fill: accentColor,
-                  fillOpacity: 0.7,
-                }),
-                Plot.ruleY([0]),
-              ],
-            }}
-          />
+          <PlotChart buildOptions={buildMonthly} />
         </div>
-
-        {/* Card 5: Scatter log-log */}
         <div className="rounded-md border border-foreground/10 p-4">
           <h3 className="text-sm font-semibold text-foreground/60 mb-3">Distance vs elevation</h3>
-          <ScatterLogLog rides={rides} accentColor={accentColor} secondaryColor={secondaryColor} />
+          <ScatterLogLog rides={rides} />
         </div>
       </div>
 
       {/* Card 6: Cumulative + daily */}
       <div className="rounded-md border border-foreground/10 p-4">
         <h3 className="text-sm font-semibold text-foreground/60 mb-3">Year overview</h3>
-        <PlotChart
-          options={{
-            height: 300,
-            marginLeft: 50,
-            marginRight: 50,
-            x: {
-              label: null,
-              type: "time",
-            },
-            y: {
-              label: "cumulative km",
-              grid: true,
-              axis: "left",
-            },
-            marks: [
-              // Daily bars on secondary y-axis (visual only — scaled to fit)
-              Plot.barY(
-                timelineData.filter((d) => d.dailyKm > 0),
-                {
-                  x: "date",
-                  y: "dailyKm",
-                  fill: secondaryColor,
-                  fillOpacity: 0.4,
-                  title: (d: { date: Date; dailyKm: number }) =>
-                    `${d.date.toISOString().slice(0, 10)}: ${Math.round(d.dailyKm)} km`,
-                }
-              ),
-              // Cumulative line
-              Plot.lineY(timelineData, {
-                x: "date",
-                y: "cumulativeKm",
-                stroke: accentColor,
-                strokeWidth: 2,
-              }),
-              Plot.ruleY([0]),
-            ],
-          }}
-        />
+        <PlotChart buildOptions={buildTimeline} />
         <div className="flex gap-4 mt-2 text-xs text-foreground/50 justify-center">
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-0.5" style={{ backgroundColor: accentColor }} />
+            <span className="inline-block w-3 h-0.5" style={{ backgroundColor: ACCENT }} />
             Cumulative km
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: secondaryColor, opacity: 0.4 }} />
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SECONDARY, opacity: 0.4 }} />
             Daily km
           </span>
         </div>
@@ -243,22 +221,11 @@ export function DashboardCards({ rides, year }: Props) {
   );
 }
 
-// Separate component for log-log scatter with fit line
-function ScatterLogLog({
-  rides,
-  accentColor,
-  secondaryColor,
-}: {
-  rides: DashboardRide[];
-  accentColor: string;
-  secondaryColor: string;
-}) {
+function ScatterLogLog({ rides }: { rides: DashboardRide[] }) {
   const { fitLine, a, b } = useMemo(() => {
-    // Filter rides with positive values for log-log
     const valid = rides.filter((r) => r.distance_km > 0 && r.elevation_gain_m > 0);
     if (valid.length < 2) return { fitLine: [], a: 0, b: 0 };
 
-    // Linear regression in log-log space: log(elev) = log(a) + b*log(dist)
     const n = valid.length;
     const logX = valid.map((r) => Math.log(r.distance_km));
     const logY = valid.map((r) => Math.log(r.elevation_gain_m));
@@ -271,8 +238,7 @@ function ScatterLogLog({
     const logA = (sumY - bVal * sumX) / n;
     const aVal = Math.exp(logA);
 
-    // Generate fit line points
-    const dists = valid.map((r) => r.distance_km).sort((a, b) => a - b);
+    const dists = valid.map((r) => r.distance_km).sort((x, y) => x - y);
     const minD = dists[0];
     const maxD = dists[dists.length - 1];
     const steps = 50;
@@ -286,7 +252,34 @@ function ScatterLogLog({
     return { fitLine: line, a: aVal, b: bVal };
   }, [rides]);
 
-  const validRides = rides.filter((r) => r.distance_km > 0 && r.elevation_gain_m > 0);
+  const validRides = useMemo(
+    () => rides.filter((r) => r.distance_km > 0 && r.elevation_gain_m > 0),
+    [rides]
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const buildScatter = useCallback((Plot: any) => ({
+    height: 200,
+    marginLeft: 50,
+    x: { label: "km", type: "log", grid: true },
+    y: { label: "m", type: "log", grid: true },
+    marks: [
+      Plot.dot(validRides, {
+        x: "distance_km",
+        y: "elevation_gain_m",
+        fill: ACCENT,
+        fillOpacity: 0.6,
+        r: 3,
+      }),
+      Plot.line(fitLine, {
+        x: "distance_km",
+        y: "elevation_gain_m",
+        stroke: SECONDARY,
+        strokeWidth: 1.5,
+        strokeDasharray: "4,3",
+      }),
+    ],
+  }), [validRides, fitLine]);
 
   if (validRides.length < 2) {
     return <p className="text-sm text-foreground/50">Need at least 2 rides with elevation data.</p>;
@@ -294,30 +287,7 @@ function ScatterLogLog({
 
   return (
     <>
-      <PlotChart
-        options={{
-          height: 200,
-          marginLeft: 50,
-          x: { label: "km", type: "log", grid: true },
-          y: { label: "m", type: "log", grid: true },
-          marks: [
-            Plot.dot(validRides, {
-              x: "distance_km",
-              y: "elevation_gain_m",
-              fill: accentColor,
-              fillOpacity: 0.6,
-              r: 3,
-            }),
-            Plot.line(fitLine, {
-              x: "distance_km",
-              y: "elevation_gain_m",
-              stroke: secondaryColor,
-              strokeWidth: 1.5,
-              strokeDasharray: "4,3",
-            }),
-          ],
-        }}
-      />
+      <PlotChart buildOptions={buildScatter} />
       <p className="text-xs text-foreground/40 mt-1 text-center">
         hm = {a.toFixed(1)} &times; km<sup>{b.toFixed(2)}</sup>
       </p>

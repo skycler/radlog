@@ -1,35 +1,41 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import * as Plot from "@observablehq/plot";
 
 interface PlotChartProps {
-  options: Plot.PlotOptions;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  buildOptions: (Plot: any) => any;
   className?: string;
 }
 
-export function PlotChart({ options, className = "" }: PlotChartProps) {
+export function PlotChart({ buildOptions, className = "" }: PlotChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const plot = Plot.plot({
-      ...options,
-      style: {
-        background: "transparent",
-        color: "currentColor",
-        fontSize: "12px",
-        ...(typeof options.style === "object" ? options.style : {}),
-      },
+    let cancelled = false;
+
+    import("@observablehq/plot").then((Plot) => {
+      if (cancelled) return;
+      const options = buildOptions(Plot);
+      const plot = Plot.plot({
+        ...options,
+        style: {
+          background: "transparent",
+          color: "currentColor",
+          fontSize: "12px",
+          ...(typeof options.style === "object" ? options.style : {}),
+        },
+      });
+      container.replaceChildren(plot);
     });
-    container.replaceChildren(plot);
 
     return () => {
-      plot.remove();
+      cancelled = true;
     };
-  }, [options]);
+  }, [buildOptions]);
 
   return <div ref={containerRef} className={className} />;
 }
