@@ -202,9 +202,9 @@ export function DashboardCards({ rides, year }: Props) {
     height: 180,
     marginLeft: 55,
     marginRight: 20,
-    marginBottom: 0,
-    x: { label: null, type: "time", domain: xDomain, axis: "bottom", tickSize: 0, tickPadding: 6 },
-    y: { label: "cumulative km", grid: true },
+    marginBottom: 25,
+    x: { label: null, type: "time", domain: xDomain },
+    y: { label: null, grid: true },
     marks: [
       Plot.lineY(timelineData, {
         x: "date",
@@ -219,6 +219,7 @@ export function DashboardCards({ rides, year }: Props) {
         title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.cumulativeKm).toLocaleString()} km total${d.dailyKm > 0 ? `\n${Math.round(d.dailyKm)} km today` : ""}`,
       })),
       Plot.ruleY([0]),
+      Plot.axisY({ anchor: "left", label: "cumulative km", labelAnchor: "bottom", labelOffset: 45 }),
     ],
   }), [timelineData, xDomain]);
 
@@ -229,7 +230,7 @@ export function DashboardCards({ rides, year }: Props) {
     marginRight: 20,
     marginTop: 0,
     x: { label: null, type: "time", domain: xDomain, axis: null },
-    y: { label: "daily km", grid: true, reverse: true },
+    y: { label: null, grid: true, reverse: true },
     marks: [
       Plot.rectY(dailyBars, {
         x1: (d: { date: Date }) => d.date,
@@ -245,6 +246,7 @@ export function DashboardCards({ rides, year }: Props) {
         title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.dailyKm)} km`,
       })),
       Plot.ruleY([0]),
+      Plot.axisY({ anchor: "left", label: "daily km", labelAnchor: "bottom", labelOffset: 45 }),
     ],
   }), [dailyBars, xDomain]);
 
