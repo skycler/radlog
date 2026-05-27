@@ -12,6 +12,7 @@ export interface RideFilters {
   distance_to?: number;
   elevation_from?: number;
   elevation_to?: number;
+  note_search?: string;
   sort_by?: "date" | "distance_km" | "elevation_gain_m";
   sort_order?: "asc" | "desc";
 }
@@ -40,6 +41,9 @@ export async function getRides(filters: RideFilters = {}) {
   }
   if (filters.elevation_to !== undefined) {
     query = query.lte("elevation_gain_m", filters.elevation_to);
+  }
+  if (filters.note_search) {
+    query = query.ilike("personal_note", `%${filters.note_search}%`);
   }
 
   const sortBy = filters.sort_by ?? "date";
