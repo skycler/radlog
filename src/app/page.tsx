@@ -21,7 +21,7 @@ export default async function Home() {
         <div className="flex gap-3">
           <Link
             href="/login"
-            className="rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-colors hover:opacity-90"
+            className="rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90"
           >
             Log in
           </Link>

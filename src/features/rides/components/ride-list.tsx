@@ -107,7 +107,7 @@ export function RideList({
   const hasElevationFilter = searchParams.has("elev_from") || searchParams.has("elev_to");
   const hasBikeFilter = selectedBikes.length > 0;
 
-  const activeClass = "text-blue-500";
+  const activeClass = "text-accent-secondary";
   const inactiveClass = "text-foreground/30 hover:text-foreground/60";
 
   return (

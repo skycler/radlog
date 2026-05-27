@@ -77,7 +77,7 @@ export default async function RidesPage({
         <div className="flex items-center gap-1">
           <Link
             href="/rides/import"
-            className="rounded-md p-1.5 text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors"
+            className="rounded-md p-1.5 text-accent-secondary/70 hover:text-accent-secondary hover:bg-accent-secondary/5 transition-colors"
             aria-label="Import rides"
             title="Import rides"
           >
@@ -85,7 +85,7 @@ export default async function RidesPage({
           </Link>
           <Link
             href="/rides/new"
-            className="rounded-md p-1.5 text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors"
+            className="rounded-md p-1.5 text-accent-secondary/70 hover:text-accent-secondary hover:bg-accent-secondary/5 transition-colors"
             aria-label="Add ride"
             title="Add ride"
           >

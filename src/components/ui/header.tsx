@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MapPinIcon, BikeIcon } from "./icons";
 import { ProfileDropdown } from "./profile-dropdown";
 
@@ -10,6 +11,14 @@ interface HeaderProps {
 }
 
 export function Header({ user, onLogout }: HeaderProps) {
+  const pathname = usePathname();
+  const isRides = pathname.startsWith("/rides");
+  const isBikes = pathname.startsWith("/bikes");
+
+  const baseClass = "rounded-md p-2 transition-colors";
+  const activeClass = `${baseClass} text-accent bg-accent/10`;
+  const inactiveClass = `${baseClass} text-foreground/60 hover:text-foreground hover:bg-foreground/5`;
+
   return (
     <header className="border-b border-foreground/10">
       <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4">
@@ -22,14 +31,14 @@ export function Header({ user, onLogout }: HeaderProps) {
             <>
               <Link
                 href="/rides"
-                className="rounded-md p-2 text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors"
+                className={isRides ? activeClass : inactiveClass}
                 title="Rides"
               >
                 <MapPinIcon />
               </Link>
               <Link
                 href="/bikes"
-                className="rounded-md p-2 text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors"
+                className={isBikes ? activeClass : inactiveClass}
                 title="Bikes"
               >
                 <BikeIcon />
