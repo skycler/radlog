@@ -194,56 +194,71 @@ export function DashboardCards({ rides, year }: Props) {
   }), [monthlyData]);
 
   const dailyBars = useMemo(() => timelineData.filter((d) => d.dailyKm > 0), [timelineData]);
+  const maxDaily = useMemo(() => Math.max(...dailyBars.map((d) => d.dailyKm), 1), [dailyBars]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buildDailyBars = useCallback((Plot: any) => ({
-    height: 120,
-    marginLeft: 50,
-    marginRight: 50,
-    marginBottom: 5,
-    x: { label: null, type: "time", domain: [new Date(year, 0, 1), new Date(year, 11, 31)] },
-    y: { label: "daily km", grid: true },
-    marks: [
-      Plot.rectY(dailyBars, {
-        x1: (d: { date: Date }) => d.date,
-        x2: (d: { date: Date }) => new Date(d.date.getTime() + 86400000),
-        y: "dailyKm",
-        fill: SECONDARY,
-        fillOpacity: 0.7,
-      }),
-      Plot.tip(dailyBars, Plot.pointerX({
-        x: "date",
-        y: "dailyKm",
+  const buildTimeline = useCallback((Plot: any) => {
+    const maxCum = Math.max(...timelineData.map((d) => d.cumulativeKm), 1);
+    return {
+      height: 300,
+      marginLeft: 60,
+      marginRight: 50,
+      x: { label: null, type: "time", domain: [new Date(year, 0, 1), new Date(year, 11, 31)] },
+      y: {
+        label: null,
+        grid: true,
+        domain: [-maxDaily * 1.1, maxCum * 1.05],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.dailyKm)} km`,
-      })),
-      Plot.ruleY([0]),
-    ],
-  }), [dailyBars, year]);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buildCumulative = useCallback((Plot: any) => ({
-    height: 200,
-    marginLeft: 50,
-    marginRight: 50,
-    x: { label: null, type: "time", domain: [new Date(year, 0, 1), new Date(year, 11, 31)] },
-    y: { label: "cumulative km", grid: true },
-    marks: [
-      Plot.lineY(timelineData, {
-        x: "date",
-        y: "cumulativeKm",
-        stroke: ACCENT,
-        strokeWidth: 2,
-      }),
-      Plot.tip(timelineData, Plot.pointerX({
-        x: "date",
-        y: "cumulativeKm",
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.cumulativeKm).toLocaleString()} km total`,
-      })),
-      Plot.ruleY([0]),
-    ],
-  }), [timelineData, year]);
+        tickFormat: (d: any) => d < 0 ? `${Math.abs(Math.round(d))}` : `${Math.round(d)}`,
+      },
+      marks: [
+        // Cumulative line (above zero)
+        Plot.lineY(timelineData, {
+          x: "date",
+          y: "cumulativeKm",
+          stroke: ACCENT,
+          strokeWidth: 2,
+        }),
+        // Daily bars (below zero)
+        Plot.rectY(dailyBars, {
+          x1: (d: { date: Date }) => d.date,
+          x2: (d: { date: Date }) => new Date(d.date.getTime() + 86400000),
+          y1: 0,
+          y2: (d: { dailyKm: number }) => -d.dailyKm,
+          fill: SECONDARY,
+          fillOpacity: 0.7,
+        }),
+        // Zero line (shared axis)
+        Plot.ruleY([0], { stroke: "currentColor", strokeOpacity: 0.3 }),
+        // Y-axis labels
+        Plot.text([{ y: maxCum * 0.95, label: "cumulative km" }], {
+          x: new Date(year, 0, 8),
+          y: "y",
+          text: "label",
+          fill: "currentColor",
+          fillOpacity: 0.4,
+          fontSize: 10,
+          textAnchor: "start",
+        }),
+        Plot.text([{ y: -maxDaily * 0.8, label: "daily km" }], {
+          x: new Date(year, 0, 8),
+          y: "y",
+          text: "label",
+          fill: "currentColor",
+          fillOpacity: 0.4,
+          fontSize: 10,
+          textAnchor: "start",
+        }),
+        // Tooltip
+        Plot.tip(timelineData, Plot.pointerX({
+          x: "date",
+          y: "cumulativeKm",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.cumulativeKm).toLocaleString()} km total${d.dailyKm > 0 ? `\n${Math.round(d.dailyKm)} km today` : ""}`,
+        })),
+      ],
+    };
+  }, [dailyBars, timelineData, year, maxDaily]);
 
   if (rides.length === 0) {
     return (
@@ -271,16 +286,15 @@ export function DashboardCards({ rides, year }: Props) {
 
       {/* Year overview: Daily + Cumulative (stacked) */}
       <ChartCard title="Year overview">
-        <PlotChart buildOptions={buildDailyBars} />
-        <PlotChart buildOptions={buildCumulative} />
+        <PlotChart buildOptions={buildTimeline} />
         <div className="flex gap-4 mt-2 text-xs text-foreground/50 justify-center">
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SECONDARY, opacity: 0.6 }} />
-            Daily km
-          </span>
           <span className="flex items-center gap-1">
             <span className="inline-block w-3 h-0.5" style={{ backgroundColor: ACCENT }} />
             Cumulative km
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SECONDARY, opacity: 0.7 }} />
+            Daily km
           </span>
         </div>
       </ChartCard>
