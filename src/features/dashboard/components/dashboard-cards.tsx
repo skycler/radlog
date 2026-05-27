@@ -60,21 +60,33 @@ export function DashboardCards({ rides, year }: Props) {
   }, [rides, year]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buildBoxplots = useCallback((Plot: any) => ({
+  const buildBoxplotKm = useCallback((Plot: any) => ({
     height: 200,
-    marginLeft: 60,
-    x: { label: null },
-    y: { label: null, grid: true },
+    marginLeft: 40,
+    marginRight: 10,
+    x: { label: null, domain: ["km"], padding: 0.4 },
+    y: { label: "km", grid: true },
     marks: [
       Plot.boxY(rides, {
-        x: () => "Distance (km)",
+        x: () => "km",
         y: "distance_km",
         fill: ACCENT,
         fillOpacity: 0.3,
         stroke: ACCENT,
       }),
+    ],
+  }), [rides]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const buildBoxplotElev = useCallback((Plot: any) => ({
+    height: 200,
+    marginLeft: 40,
+    marginRight: 10,
+    x: { label: null, domain: ["m"], padding: 0.4 },
+    y: { label: "m", grid: true },
+    marks: [
       Plot.boxY(rides, {
-        x: () => "Elevation (m)",
+        x: () => "m",
         y: "elevation_gain_m",
         fill: SECONDARY,
         fillOpacity: 0.3,
@@ -178,11 +190,11 @@ export function DashboardCards({ rides, year }: Props) {
         ))}
       </div>
 
-      {/* Row 2: Boxplots + Histogram */}
+      {/* Row 2: Monthly + Histogram */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="rounded-md border border-foreground/10 p-4">
-          <h3 className="text-sm font-semibold text-foreground/60 mb-3">Distribution</h3>
-          <PlotChart buildOptions={buildBoxplots} />
+          <h3 className="text-sm font-semibold text-foreground/60 mb-3">Monthly distance</h3>
+          <PlotChart buildOptions={buildMonthly} />
         </div>
         <div className="rounded-md border border-foreground/10 p-4">
           <h3 className="text-sm font-semibold text-foreground/60 mb-3">Distance distribution</h3>
@@ -190,15 +202,18 @@ export function DashboardCards({ rides, year }: Props) {
         </div>
       </div>
 
-      {/* Row 3: Monthly sums + Scatter */}
+      {/* Row 3: Scatter + Boxplots */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="rounded-md border border-foreground/10 p-4">
-          <h3 className="text-sm font-semibold text-foreground/60 mb-3">Monthly distance</h3>
-          <PlotChart buildOptions={buildMonthly} />
-        </div>
         <div className="rounded-md border border-foreground/10 p-4">
           <h3 className="text-sm font-semibold text-foreground/60 mb-3">Distance vs elevation</h3>
           <ScatterLogLog rides={rides} />
+        </div>
+        <div className="rounded-md border border-foreground/10 p-4">
+          <h3 className="text-sm font-semibold text-foreground/60 mb-3">Distribution</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <PlotChart buildOptions={buildBoxplotKm} />
+            <PlotChart buildOptions={buildBoxplotElev} />
+          </div>
         </div>
       </div>
 
