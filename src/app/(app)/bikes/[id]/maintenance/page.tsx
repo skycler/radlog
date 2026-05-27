@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getBike, getMaintenanceHistory } from "@/features/bikes/actions";
+import { MaintenanceList } from "@/features/bikes/components/maintenance-list";
 
 export default async function MaintenancePage({
   params,
@@ -32,25 +33,7 @@ export default async function MaintenancePage({
           </p>
         </div>
       ) : (
-        <ul className="space-y-3">
-          {entries.map((entry) => (
-            <li
-              key={entry.id}
-              className="rounded-md border border-foreground/10 px-4 py-3"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground/50">{entry.date}</span>
-                <Link
-                  href={`/rides/${entry.id}/edit`}
-                  className="text-xs text-foreground/40 hover:text-foreground transition-colors"
-                >
-                  View ride
-                </Link>
-              </div>
-              <p className="mt-1 text-foreground">{entry.maintenance_note}</p>
-            </li>
-          ))}
-        </ul>
+        <MaintenanceList entries={entries} bikeId={id} />
       )}
     </div>
   );
