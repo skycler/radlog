@@ -51,7 +51,7 @@ export function BikeList({ bikes }: { bikes: Bike[] }) {
             <div className="flex gap-1">
               <Link
                 href={`/bikes/${bike.id}/maintenance`}
-                className="rounded-md p-1.5 text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors"
+                className="rounded-md p-1.5 text-accent-secondary/70 hover:text-accent-secondary hover:bg-accent-secondary/5 transition-colors"
                 aria-label={`Maintenance history for ${bike.name}`}
                 title="Maintenance"
               >
@@ -59,7 +59,7 @@ export function BikeList({ bikes }: { bikes: Bike[] }) {
               </Link>
               <Link
                 href={`/bikes/${bike.id}/edit`}
-                className="rounded-md p-1.5 text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-colors"
+                className="rounded-md p-1.5 text-accent-secondary/70 hover:text-accent-secondary hover:bg-accent-secondary/5 transition-colors"
                 aria-label={`Edit ${bike.name}`}
                 title="Edit"
               >

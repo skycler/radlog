@@ -12,7 +12,7 @@ export default async function BikesPage() {
         <h1 className="text-2xl font-bold">Bikes</h1>
         <Link
             href="/bikes/new"
-            className="rounded-md p-1.5 text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors"
+            className="rounded-md p-1.5 text-accent-secondary/70 hover:text-accent-secondary hover:bg-accent-secondary/5 transition-colors"
             aria-label="Add bike"
             title="Add bike"
           >

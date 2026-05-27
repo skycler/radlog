@@ -4,7 +4,7 @@ type ButtonVariant = "primary" | "secondary" | "danger";
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-foreground text-background hover:opacity-90",
+    "bg-accent text-white hover:opacity-90",
   secondary:
     "border border-foreground/20 text-foreground hover:bg-foreground/5 dark:hover:bg-foreground/10",
   danger:
@@ -20,7 +20,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 disabled:pointer-events-none disabled:opacity-50 ${variantStyles[variant]} ${className}`}
+        className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 disabled:pointer-events-none disabled:opacity-50 ${variantStyles[variant]} ${className}`}
         {...props}
       >
         {children}
