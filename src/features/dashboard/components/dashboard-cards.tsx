@@ -203,7 +203,7 @@ export function DashboardCards({ rides, year }: Props) {
     marginLeft: 55,
     marginRight: 20,
     marginBottom: 25,
-    x: { label: null, type: "time", domain: xDomain },
+    x: { label: null, type: "time", domain: xDomain, ticks: "month" },
     y: { label: null, grid: true },
     marks: [
       Plot.lineY(timelineData, {
@@ -225,11 +225,11 @@ export function DashboardCards({ rides, year }: Props) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const buildDaily = useCallback((Plot: any) => ({
-    height: 100,
+    height: 110,
     marginLeft: 55,
     marginRight: 20,
-    marginTop: 0,
-    x: { label: null, type: "time", domain: xDomain, axis: "top", ticks: "month", tickFormat: () => "", tickSize: 3 },
+    marginTop: 10,
+    x: { label: null, type: "time", domain: xDomain, axis: "top", ticks: "month", tickFormat: () => "", tickSize: 4 },
     y: { label: null, grid: true, reverse: true },
     marks: [
       Plot.rectY(dailyBars, {
