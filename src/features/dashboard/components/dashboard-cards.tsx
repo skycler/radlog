@@ -203,9 +203,10 @@ export function DashboardCards({ rides, year }: Props) {
     marginLeft: 55,
     marginRight: 20,
     marginBottom: 25,
-    x: { label: null, type: "time", domain: xDomain, ticks: "month" },
+    x: { type: "time", domain: xDomain, axis: null },
     y: { label: null, grid: true },
     marks: [
+      Plot.axisX({ anchor: "bottom", ticks: "month", tickSize: 4, tickPadding: 3, label: null }),
       Plot.lineY(timelineData, {
         x: "date",
         y: "cumulativeKm",
@@ -229,9 +230,10 @@ export function DashboardCards({ rides, year }: Props) {
     marginLeft: 55,
     marginRight: 20,
     marginTop: 10,
-    x: { label: null, type: "time", domain: xDomain, axis: "top", ticks: "month", tickFormat: () => "", tickSize: 4 },
+    x: { type: "time", domain: xDomain, axis: null },
     y: { label: null, grid: true, reverse: true },
     marks: [
+      Plot.axisX({ anchor: "top", ticks: "month", tickSize: 4, tickFormat: () => "", label: null }),
       Plot.rectY(dailyBars, {
         x1: (d: { date: Date }) => d.date,
         x2: (d: { date: Date }) => new Date(d.date.getTime() + 86400000),
