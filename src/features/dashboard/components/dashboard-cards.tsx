@@ -310,7 +310,7 @@ export function DashboardCards({ rides, year, target }: Props) {
     );
 
     return {
-      height: 180,
+      height: 260,
       marginLeft: 55,
       marginRight: 20,
       marginBottom: 25,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { upsertYearlyTarget, deleteYearlyTarget } from "../actions";
 import type { YearlyTarget } from "../actions";
 
@@ -26,6 +27,7 @@ interface Props {
 export function TargetEditor({ year, target }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const [hasTarget, setHasTarget] = useState(!!target);
   const [targetKm, setTargetKm] = useState(target?.target_km?.toString() ?? "");
   const [toleranceValue, setToleranceValue] = useState(
@@ -79,6 +81,7 @@ export function TargetEditor({ year, target }: Props) {
         setSaved(true);
         setHasTarget(true);
         setTimeout(() => setSaved(false), 2000);
+        router.refresh();
       } catch {
         setError("Failed to save target");
       }
@@ -96,6 +99,7 @@ export function TargetEditor({ year, target }: Props) {
         setSpread(0.5);
         setHasTarget(false);
         setIsOpen(false);
+        router.refresh();
       } catch {
         setError("Failed to delete target");
       }
