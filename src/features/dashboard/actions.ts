@@ -34,3 +34,62 @@ export async function getAvailableYears(): Promise<number[]> {
   const years = new Set(data.map((r) => new Date(r.date).getFullYear()));
   return Array.from(years).sort((a, b) => b - a);
 }
+
+export interface YearlyTarget {
+  id: string;
+  year: number;
+  target_km: number;
+  tolerance: number;
+  distribution_stdev: number | null;
+}
+
+export async function getYearlyTarget(year: number): Promise<YearlyTarget | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("yearly_targets")
+    .select("id, year, target_km, tolerance, distribution_stdev")
+    .eq("year", year)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function upsertYearlyTarget(input: {
+  year: number;
+  target_km: number;
+  tolerance: number;
+  distribution_stdev: number | null;
+}): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { error } = await supabase
+    .from("yearly_targets")
+    .upsert(
+      {
+        user_id: user.id,
+        year: input.year,
+        target_km: input.target_km,
+        tolerance: input.tolerance,
+        distribution_stdev: input.distribution_stdev,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id,year" }
+    );
+
+  if (error) throw error;
+}
+
+export async function deleteYearlyTarget(year: number): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("yearly_targets")
+    .delete()
+    .eq("year", year);
+
+  if (error) throw error;
+}
