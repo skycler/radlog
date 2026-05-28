@@ -14,6 +14,7 @@
   --foreground: #ededed;
   --accent: #2dd4bf;
   --accent-secondary: #fb7185;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -28,4 +29,9 @@
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Ensure Observable Plot SVG text is readable in dark mode */
+.dark svg text {
+  fill: var(--foreground);
 }
