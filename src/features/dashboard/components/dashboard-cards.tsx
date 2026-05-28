@@ -25,6 +25,7 @@ interface Props {
   rides: DashboardRide[];
   year: number;
   target: YearlyTarget | null;
+  hasRidesAnyYear?: boolean;
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -44,7 +45,7 @@ function computeMonthlyWeights(spread: number): number[] {
   return raw.map((w) => w / sum);
 }
 
-export function DashboardCards({ rides, year, target }: Props) {
+export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) {
   const stats = useMemo(() => {
     const totalRides = rides.length;
     const totalKm = rides.reduce((s, r) => s + r.distance_km, 0);
@@ -353,9 +354,15 @@ export function DashboardCards({ rides, year, target }: Props) {
   if (rides.length === 0) {
     return (
       <div className="rounded-md border border-foreground/10 px-4 py-8 text-center">
-        <p className="text-foreground/60">No rides recorded this year.</p>
+        <p className="text-foreground/60">
+          {hasRidesAnyYear
+            ? `No rides recorded in ${year}.`
+            : "No rides yet."}
+        </p>
         <Link href="/rides/new">
-          <Button className="mt-4">Log your first ride</Button>
+          <Button className="mt-4">
+            {hasRidesAnyYear ? "Log a ride" : "Log your first ride"}
+          </Button>
         </Link>
       </div>
     );

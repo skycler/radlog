@@ -30,7 +30,7 @@ export default async function DashboardPage({
         </div>
       </div>
       <Suspense>
-        <DashboardCards rides={rides} year={year} target={target} />
+        <DashboardCards rides={rides} year={year} target={target} hasRidesAnyYear={availableYears.length > 0} />
       </Suspense>
     </div>
   );
