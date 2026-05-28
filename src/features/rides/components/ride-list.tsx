@@ -329,10 +329,10 @@ export function RideList({
             ) : (
               rides.map((ride) => (
                 <tr key={ride.id} className="border-b border-foreground/5 last:border-0">
-                  <td className="px-4 py-2 whitespace-nowrap">{ride.date}</td>
+                  <td className="px-4 py-2 whitespace-nowrap font-mono">{ride.date}</td>
                   <td className="px-4 py-2 whitespace-nowrap">{ride.bikes?.name ?? "—"}</td>
-                  <td className="px-4 py-2 text-right whitespace-nowrap">{ride.distance_km} km</td>
-                  <td className="px-4 py-2 text-right whitespace-nowrap">{ride.elevation_gain_m} m</td>
+                  <td className="px-4 py-2 text-right whitespace-nowrap font-mono">{ride.distance_km} km</td>
+                  <td className="px-4 py-2 text-right whitespace-nowrap font-mono">{ride.elevation_gain_m} m</td>
                   <td className="hidden sm:table-cell px-4 py-2 max-w-[200px] truncate text-foreground/60">
                     {ride.personal_note || "—"}
                   </td>
