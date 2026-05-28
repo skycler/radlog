@@ -1,7 +1,8 @@
 import { Suspense } from "react";
-import { getDashboardRides, getAvailableYears } from "@/features/dashboard/actions";
+import { getDashboardRides, getAvailableYears, getYearlyTarget } from "@/features/dashboard/actions";
 import { DashboardCards } from "@/features/dashboard/components/dashboard-cards";
 import { YearSelector } from "@/features/dashboard/components/year-selector";
+import { TargetEditor } from "@/features/dashboard/components/target-editor";
 
 export default async function DashboardPage({
   searchParams,
@@ -13,9 +14,10 @@ export default async function DashboardPage({
   const yearParam = typeof sp.year === "string" ? parseInt(sp.year, 10) : currentYear;
   const year = isNaN(yearParam) ? currentYear : yearParam;
 
-  const [rides, availableYears] = await Promise.all([
+  const [rides, availableYears, target] = await Promise.all([
     getDashboardRides(year),
     getAvailableYears(),
+    getYearlyTarget(year),
   ]);
 
   return (
@@ -23,6 +25,9 @@ export default async function DashboardPage({
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <YearSelector years={availableYears} current={year} />
+      </div>
+      <div className="mb-6">
+        <TargetEditor year={year} target={target} />
       </div>
       <Suspense>
         <DashboardCards rides={rides} year={year} />

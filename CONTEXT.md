@@ -11,6 +11,7 @@ A manual ride-logging webapp for passionate cyclists. Radlog is intentionally mi
 - **Personal note** — free-text description of the ride (route, feelings, conditions, etc.).
 - **Maintenance note** — notes about equipment condition observed during a ride (e.g. "chain needs replacement", "new tires grip well"). Tied to both the ride and the bike.
 - **Maintenance history** — the chronological view of all maintenance notes for a specific bike.
+- **Yearly target** — a user-defined distance goal for a given year, with an allowed tolerance (±km) and an optional Gaussian distribution parameter (σ) controlling expected seasonal spread.
 
 ## Users
 

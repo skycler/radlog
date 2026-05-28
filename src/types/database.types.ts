@@ -105,6 +105,39 @@ export type Database = {
           },
         ]
       }
+      yearly_targets: {
+        Row: {
+          created_at: string
+          distribution_stdev: number | null
+          id: string
+          target_km: number
+          tolerance: number
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          distribution_stdev?: number | null
+          id?: string
+          target_km: number
+          tolerance?: number
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          distribution_stdev?: number | null
+          id?: string
+          target_km?: number
+          tolerance?: number
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
