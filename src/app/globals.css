@@ -35,3 +35,11 @@ body {
 .dark svg text {
   fill: var(--foreground);
 }
+
+/* Keep tip (tooltip) text dark on its light background */
+.dark svg [aria-label="tip"] {
+  color: #171717;
+}
+.dark svg [aria-label="tip"] text {
+  fill: #171717;
+}
