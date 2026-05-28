@@ -270,7 +270,7 @@ export function DashboardCards({ rides, year }: Props) {
           { label: "Elevation", value: `${Math.round(stats.totalElev).toLocaleString()} m` },
         ].map((s) => (
           <div key={s.label} className="rounded-md border border-foreground/10 px-4 py-4 text-center">
-            <p className="text-2xl font-bold">{s.value}</p>
+            <p className="text-2xl font-bold font-mono">{s.value}</p>
             <p className="text-sm text-foreground/50">{s.label}</p>
           </div>
         ))}
@@ -389,7 +389,7 @@ function ScatterLogLog({ rides }: { rides: DashboardRide[] }) {
   return (
     <>
       <PlotChart buildOptions={buildScatter} />
-      <p className="text-xs text-foreground/40 mt-1 text-center">
+      <p className="text-xs text-foreground/40 mt-1 text-center font-mono">
         hm = {a.toFixed(1)} &times; km<sup>{b.toFixed(2)}</sup>
       </p>
     </>

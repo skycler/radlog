@@ -41,6 +41,7 @@ export function PlotChart({ buildOptions, className = "" }: PlotChartProps) {
           background: "transparent",
           color: "currentColor",
           fontSize: "12px",
+          fontFamily: "var(--font-jetbrains-mono), ui-monospace, monospace",
           ...(typeof options.style === "object" ? options.style : {}),
         },
       });

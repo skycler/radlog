@@ -99,19 +99,19 @@ export function MaintenanceList({
           ) : stats ? (
             <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
               <div>
-                <p className="text-2xl font-bold">{stats.days}</p>
+                <p className="text-2xl font-bold font-mono">{stats.days}</p>
                 <p className="text-xs text-foreground/50">days</p>
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.rideCount}</p>
+                <p className="text-2xl font-bold font-mono">{stats.rideCount}</p>
                 <p className="text-xs text-foreground/50">rides</p>
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.totalDistanceKm}</p>
+                <p className="text-2xl font-bold font-mono">{stats.totalDistanceKm}</p>
                 <p className="text-xs text-foreground/50">km</p>
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.totalElevationM}</p>
+                <p className="text-2xl font-bold font-mono">{stats.totalElevationM}</p>
                 <p className="text-xs text-foreground/50">m elevation</p>
               </div>
             </div>
@@ -151,7 +151,7 @@ export function MaintenanceList({
                   >
                     {isSelected && "✓"}
                   </span>
-                  <span className="text-sm text-foreground/50">
+                  <span className="text-sm text-foreground/50 font-mono">
                     {entry.date}
                   </span>
                 </div>
