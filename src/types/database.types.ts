@@ -108,7 +108,7 @@ export type Database = {
       yearly_targets: {
         Row: {
           created_at: string
-          distribution_stdev: number | null
+          distribution_spread: number | null
           id: string
           target_km: number
           tolerance: number

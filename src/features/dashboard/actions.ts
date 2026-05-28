@@ -40,14 +40,14 @@ export interface YearlyTarget {
   year: number;
   target_km: number;
   tolerance: number;
-  distribution_stdev: number | null;
+  distribution_spread: number | null;
 }
 
 export async function getYearlyTarget(year: number): Promise<YearlyTarget | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("yearly_targets")
-    .select("id, year, target_km, tolerance, distribution_stdev")
+    .select("id, year, target_km, tolerance, distribution_spread")
     .eq("year", year)
     .maybeSingle();
 
@@ -59,7 +59,7 @@ export async function upsertYearlyTarget(input: {
   year: number;
   target_km: number;
   tolerance: number;
-  distribution_stdev: number | null;
+  distribution_spread: number | null;
 }): Promise<void> {
   const supabase = await createClient();
   const {
@@ -75,7 +75,7 @@ export async function upsertYearlyTarget(input: {
         year: input.year,
         target_km: input.target_km,
         tolerance: input.tolerance,
-        distribution_stdev: input.distribution_stdev,
+        distribution_spread: input.distribution_spread,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id,year" }
