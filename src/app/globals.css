@@ -14,6 +14,7 @@
   --foreground: #ededed;
   --accent: #2dd4bf;
   --accent-secondary: #fb7185;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -28,4 +29,17 @@
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Ensure Observable Plot SVG text is readable in dark mode */
+.dark svg text {
+  fill: var(--foreground);
+}
+
+/* Keep tip (tooltip) text dark on its light background */
+.dark svg [aria-label="tip"] {
+  color: #171717;
+}
+.dark svg [aria-label="tip"] text {
+  fill: #171717;
 }
