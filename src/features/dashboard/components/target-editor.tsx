@@ -26,6 +26,7 @@ interface Props {
 export function TargetEditor({ year, target }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [hasTarget, setHasTarget] = useState(!!target);
   const [targetKm, setTargetKm] = useState(target?.target_km?.toString() ?? "");
   const [toleranceValue, setToleranceValue] = useState(
     target?.tolerance?.toString() ?? "200"
@@ -76,6 +77,7 @@ export function TargetEditor({ year, target }: Props) {
           distribution_spread: spread,
         });
         setSaved(true);
+        setHasTarget(true);
         setTimeout(() => setSaved(false), 2000);
       } catch {
         setError("Failed to save target");
@@ -92,6 +94,7 @@ export function TargetEditor({ year, target }: Props) {
         setToleranceValue("200");
         setToleranceMode("km");
         setSpread(0.5);
+        setHasTarget(false);
         setIsOpen(false);
       } catch {
         setError("Failed to delete target");
@@ -117,7 +120,7 @@ export function TargetEditor({ year, target }: Props) {
         <svg
           viewBox="0 0 20 20"
           fill="currentColor"
-          className={`h-5 w-5 ${target ? "text-accent" : "text-foreground/30"}`}
+          className={`h-5 w-5 ${hasTarget ? "text-accent" : "text-foreground/30"}`}
         >
           <path
             fillRule="evenodd"
@@ -270,9 +273,9 @@ export function TargetEditor({ year, target }: Props) {
                 disabled={isPending}
                 className="rounded bg-accent px-4 py-1.5 text-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
               >
-                {isPending ? "Saving..." : saved ? "Saved!" : target ? "Update" : "Save"}
+                {isPending ? "Saving..." : saved ? "Saved!" : hasTarget ? "Update" : "Save"}
               </button>
-              {target && (
+              {hasTarget && (
                 <button
                   type="button"
                   onClick={handleDelete}
