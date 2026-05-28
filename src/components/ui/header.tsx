@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MapPinIcon, BikeIcon, ChartBarIcon } from "./icons";
+import { ClipboardListIcon, BikeIcon, ChartBarIcon } from "./icons";
 import { ProfileDropdown } from "./profile-dropdown";
 
 interface HeaderProps {
@@ -42,7 +42,7 @@ export function Header({ user, onLogout }: HeaderProps) {
                 className={isRides ? activeClass : inactiveClass}
                 title="Rides"
               >
-                <MapPinIcon />
+                <ClipboardListIcon />
               </Link>
               <Link
                 href="/bikes"
