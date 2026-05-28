@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { PlotChart } from "./plot-chart";
 import { ChartCard } from "./chart-card";
 import type { DashboardRide, YearlyTarget } from "../actions";
@@ -352,6 +354,9 @@ export function DashboardCards({ rides, year, target }: Props) {
     return (
       <div className="rounded-md border border-foreground/10 px-4 py-8 text-center">
         <p className="text-foreground/60">No rides recorded this year.</p>
+        <Link href="/rides/new">
+          <Button className="mt-4">Log your first ride</Button>
+        </Link>
       </div>
     );
   }
