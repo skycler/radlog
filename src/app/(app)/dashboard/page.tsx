@@ -24,10 +24,10 @@ export default async function DashboardPage({
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <YearSelector years={availableYears} current={year} />
-      </div>
-      <div className="mb-6">
-        <TargetEditor year={year} target={target} />
+        <div className="flex items-center gap-2">
+          <TargetEditor year={year} target={target} />
+          <YearSelector years={availableYears} current={year} />
+        </div>
       </div>
       <Suspense>
         <DashboardCards rides={rides} year={year} />
