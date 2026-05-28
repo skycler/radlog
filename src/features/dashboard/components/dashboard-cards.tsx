@@ -3,7 +3,7 @@
 import { useMemo, useCallback } from "react";
 import { PlotChart } from "./plot-chart";
 import { ChartCard } from "./chart-card";
-import type { DashboardRide } from "../actions";
+import type { DashboardRide, YearlyTarget } from "../actions";
 
 function computeBoxStats(values: number[]) {
   const sorted = [...values].sort((a, b) => a - b);
@@ -22,14 +22,27 @@ function computeBoxStats(values: number[]) {
 interface Props {
   rides: DashboardRide[];
   year: number;
+  target: YearlyTarget | null;
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const ACCENT = "var(--accent)";
 const SECONDARY = "var(--accent-secondary)";
+const CENTER = 5.5;
+const SIGMA_MIN = 0.7;
+const K = 3;
 
-export function DashboardCards({ rides, year }: Props) {
+function computeMonthlyWeights(spread: number): number[] {
+  const sigma = SIGMA_MIN * Math.exp(K * spread);
+  const raw = Array.from({ length: 12 }, (_, m) =>
+    Math.exp(-0.5 * ((m - CENTER) / sigma) ** 2)
+  );
+  const sum = raw.reduce((a, b) => a + b, 0);
+  return raw.map((w) => w / sum);
+}
+
+export function DashboardCards({ rides, year, target }: Props) {
   const stats = useMemo(() => {
     const totalRides = rides.length;
     const totalKm = rides.reduce((s, r) => s + r.distance_km, 0);
@@ -77,6 +90,40 @@ export function DashboardCards({ rides, year }: Props) {
 
   const kmStats = useMemo(() => computeBoxStats(rides.map((r) => r.distance_km)), [rides]);
   const elevStats = useMemo(() => computeBoxStats(rides.map((r) => r.elevation_gain_m)), [rides]);
+
+  // Target distribution data for charts
+  const targetMonthlyKm = useMemo(() => {
+    if (!target) return null;
+    const spread = target.distribution_spread ?? 1;
+    const weights = computeMonthlyWeights(spread);
+    return weights.map((w) => w * target.target_km);
+  }, [target]);
+
+  const targetCumulativeData = useMemo(() => {
+    if (!target || !targetMonthlyKm) return null;
+    const toleranceKm = target.tolerance;
+    const points: { date: Date; targetKm: number; lo: number; hi: number }[] = [];
+    let cumTarget = 0;
+    for (let m = 0; m < 12; m++) {
+      // Start of month
+      const startDate = new Date(year, m, 1);
+      points.push({
+        date: startDate,
+        targetKm: cumTarget,
+        lo: Math.max(0, cumTarget - toleranceKm * (cumTarget / target.target_km)),
+        hi: cumTarget + toleranceKm * (cumTarget / target.target_km),
+      });
+      cumTarget += targetMonthlyKm[m];
+    }
+    // End of year
+    points.push({
+      date: new Date(year, 11, 31),
+      targetKm: cumTarget,
+      lo: Math.max(0, cumTarget - toleranceKm),
+      hi: cumTarget + toleranceKm,
+    });
+    return points;
+  }, [target, targetMonthlyKm, year]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const buildBoxplotKm = useCallback((Plot: any) => {
@@ -171,12 +218,9 @@ export function DashboardCards({ rides, year }: Props) {
   }), [rides]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buildMonthly = useCallback((Plot: any) => ({
-    height: 200,
-    marginLeft: 50,
-    x: { label: null, domain: MONTHS, padding: 0.3 },
-    y: { label: "km", grid: true },
-    marks: [
+  const buildMonthly = useCallback((Plot: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const marks: any[] = [
       Plot.barY(monthlyData, {
         x: "label",
         y: "km",
@@ -190,22 +234,64 @@ export function DashboardCards({ rides, year }: Props) {
         title: (d: any) => `${d.label}: ${Math.round(d.km)} km\n${d.rides} ride${d.rides !== 1 ? "s" : ""}\n${Math.round(d.elevation).toLocaleString()} m elev`,
       })),
       Plot.ruleY([0]),
-    ],
-  }), [monthlyData]);
+    ];
+
+    if (targetMonthlyKm) {
+      const targetData = MONTHS.map((label, i) => ({ label, targetKm: targetMonthlyKm[i] }));
+      marks.push(
+        Plot.tickY(targetData, {
+          x: "label",
+          y: "targetKm",
+          stroke: "var(--foreground)",
+          strokeWidth: 2,
+          strokeDasharray: "4,3",
+          strokeOpacity: 0.4,
+        })
+      );
+    }
+
+    return {
+      height: 200,
+      marginLeft: 50,
+      x: { label: null, domain: MONTHS, padding: 0.3 },
+      y: { label: "km", grid: true },
+      marks,
+    };
+  }, [monthlyData, targetMonthlyKm]);
 
   const dailyBars = useMemo(() => timelineData.filter((d) => d.dailyKm > 0), [timelineData]);
 
   const xDomain = useMemo(() => [new Date(year, 0, 1), new Date(year, 11, 31)] as [Date, Date], [year]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buildCumulative = useCallback((Plot: any) => ({
-    height: 180,
-    marginLeft: 55,
-    marginRight: 20,
-    marginBottom: 25,
-    x: { type: "time", domain: xDomain, axis: null },
-    y: { label: null, grid: true },
-    marks: [
+  const buildCumulative = useCallback((Plot: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const marks: any[] = [];
+
+    // Target tolerance band (behind everything)
+    if (targetCumulativeData) {
+      marks.push(
+        Plot.areaY(targetCumulativeData, {
+          x: "date",
+          y1: "lo",
+          y2: "hi",
+          fill: "var(--foreground)",
+          fillOpacity: 0.06,
+        })
+      );
+      marks.push(
+        Plot.lineY(targetCumulativeData, {
+          x: "date",
+          y: "targetKm",
+          stroke: "var(--foreground)",
+          strokeWidth: 1.5,
+          strokeDasharray: "6,4",
+          strokeOpacity: 0.3,
+        })
+      );
+    }
+
+    marks.push(
       Plot.axisX({ anchor: "bottom", ticks: "month", tickSize: 4, tickPadding: 3, label: null, tickFormat: "%b" }),
       Plot.lineY(timelineData, {
         x: "date",
@@ -221,8 +307,18 @@ export function DashboardCards({ rides, year }: Props) {
       })),
       Plot.ruleY([0]),
       Plot.axisY({ anchor: "left", label: "cumulative km" }),
-    ],
-  }), [timelineData, xDomain]);
+    );
+
+    return {
+      height: 180,
+      marginLeft: 55,
+      marginRight: 20,
+      marginBottom: 25,
+      x: { type: "time", domain: xDomain, axis: null },
+      y: { label: null, grid: true },
+      marks,
+    };
+  }, [timelineData, xDomain, targetCumulativeData]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const buildDaily = useCallback((Plot: any) => ({
@@ -280,7 +376,7 @@ export function DashboardCards({ rides, year }: Props) {
       <ChartCard title="Year overview">
         <PlotChart buildOptions={buildCumulative} />
         <PlotChart buildOptions={buildDaily} />
-        <div className="flex gap-4 mt-2 text-xs text-foreground/50 justify-center">
+        <div className="flex gap-4 mt-2 text-xs text-foreground/50 justify-center flex-wrap">
           <span className="flex items-center gap-1">
             <span className="inline-block w-3 h-0.5" style={{ backgroundColor: ACCENT }} />
             Cumulative km
@@ -289,6 +385,12 @@ export function DashboardCards({ rides, year }: Props) {
             <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SECONDARY, opacity: 0.7 }} />
             Daily km
           </span>
+          {target && (
+            <span className="flex items-center gap-1">
+              <span className="inline-block w-3 h-0.5 border-t-2 border-dashed border-foreground/30" />
+              Target
+            </span>
+          )}
         </div>
       </ChartCard>
 
