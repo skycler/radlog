@@ -38,7 +38,7 @@ export default async function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center px-4 pt-32 pb-24 text-center">
+      <section className="flex flex-col items-center justify-center px-4 pt-20 pb-16 text-center">
         <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
           Radlog
         </h1>
@@ -63,7 +63,7 @@ export default async function Home() {
       </section>
 
       {/* Philosophy */}
-      <section className="mx-auto max-w-2xl px-4 py-24 text-center">
+      <section className="mx-auto max-w-2xl px-4 py-14 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           The ride is yours. Keep it that way.
         </h2>
@@ -78,7 +78,7 @@ export default async function Home() {
 
       {/* Feature highlights */}
       <section className="mx-auto w-full max-w-5xl px-4 py-12">
-        <div className="flex flex-col gap-24">
+        <div className="flex flex-col gap-16">
           {features.map((feature, i) => (
             <div
               key={feature.headline}
@@ -111,7 +111,7 @@ export default async function Home() {
       </section>
 
       {/* Bulk import teaser */}
-      <section className="mx-auto max-w-2xl px-4 py-24 text-center">
+      <section className="mx-auto max-w-2xl px-4 py-14 text-center">
         <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
           Already tracking your rides? Bring them with you.
         </h2>
@@ -123,7 +123,7 @@ export default async function Home() {
       </section>
 
       {/* Closing CTA */}
-      <section className="flex flex-col items-center px-4 py-24 text-center">
+      <section className="flex flex-col items-center px-4 py-16 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           Start your ride journal
         </h2>
