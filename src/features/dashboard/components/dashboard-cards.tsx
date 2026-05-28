@@ -79,7 +79,7 @@ export function DashboardCards({ rides, year, target }: Props) {
     let cumulative = 0;
     const current = new Date(start);
     while (current <= end) {
-      const key = current.toISOString().slice(0, 10);
+      const key = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}-${String(current.getDate()).padStart(2, '0')}`;
       const daily = dayMap.get(key) || 0;
       cumulative += daily;
       days.push({ date: new Date(current), dailyKm: daily, cumulativeKm: cumulative });
