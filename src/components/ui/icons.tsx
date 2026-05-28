@@ -99,20 +99,22 @@ export function WrenchIcon(props: IconProps) {
   );
 }
 
-export function MapPinIcon(props: IconProps) {
+export function ClipboardListIcon(props: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" {...props}>
-      <path fillRule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433a19.695 19.695 0 002.683-2.006c1.9-1.7 3.945-4.274 3.945-7.593a7.75 7.75 0 00-15.5 0c0 3.319 2.045 5.893 3.945 7.593a19.695 19.695 0 002.683 2.006 13.77 13.77 0 00.757.433c.105.055.193.1.281.14l.018.008.006.003zM10 11.25a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" clipRule="evenodd" />
+      <path fillRule="evenodd" d="M10.5 3A1.501 1.501 0 009 4.5h2A1.5 1.5 0 009.5 3h1zm-2.693.178A3.001 3.001 0 0113 4.5V5h1.25A2.75 2.75 0 0117 7.75v8.5A2.75 2.75 0 0114.25 19H5.75A2.75 2.75 0 013 16.25v-8.5A2.75 2.75 0 015.75 5H7v-.5c0-.51.127-.99.352-1.411A.75.75 0 017.807 3.178zM7 6.5H5.75c-.69 0-1.25.56-1.25 1.25v8.5c0 .69.56 1.25 1.25 1.25h8.5c.69 0 1.25-.56 1.25-1.25v-8.5c0-.69-.56-1.25-1.25-1.25H13V7a1 1 0 01-1 1H8a1 1 0 01-1-1v-.5zm0 4a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 017 10.5zm.75 2.25a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-4.5z" clipRule="evenodd" />
     </svg>
   );
 }
 
 export function BikeIcon(props: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" {...props}>
-      <circle cx="5.5" cy="17.5" r="3.5" />
-      <circle cx="18.5" cy="17.5" r="3.5" />
-      <path d="M15 6a1 1 0 100-2 1 1 0 000 2zm-3 11.5V14l-3-3 4-3 2 3h2" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" {...props}>
+      <circle cx="5" cy="17" r="3" />
+      <circle cx="19" cy="17" r="3" />
+      <path d="M12 17l-3-8h6l-3 8z" />
+      <path d="M9 9l3-3h4l2 8" />
+      <path d="M5 17l4-8" />
     </svg>
   );
 }
