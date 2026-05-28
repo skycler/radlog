@@ -29,7 +29,7 @@ export async function getAvailableYears(): Promise<number[]> {
     .order("date", { ascending: true });
 
   if (error) throw error;
-  if (!data || data.length === 0) return [new Date().getFullYear()];
+  if (!data || data.length === 0) return [];
 
   const years = new Set(data.map((r) => new Date(r.date).getFullYear()));
   return Array.from(years).sort((a, b) => b - a);

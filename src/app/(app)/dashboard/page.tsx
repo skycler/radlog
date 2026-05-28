@@ -10,13 +10,19 @@ export default async function DashboardPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const sp = await searchParams;
-  const currentYear = new Date().getFullYear();
-  const yearParam = typeof sp.year === "string" ? parseInt(sp.year, 10) : currentYear;
-  const year = isNaN(yearParam) ? currentYear : yearParam;
+  const availableYears = await getAvailableYears();
 
-  const [rides, availableYears, target] = await Promise.all([
+  let year: number;
+  if (typeof sp.year === "string" && !isNaN(parseInt(sp.year, 10))) {
+    year = parseInt(sp.year, 10);
+  } else if (availableYears.length > 0) {
+    year = availableYears[0]; // sorted descending — latest year with rides
+  } else {
+    year = new Date().getFullYear();
+  }
+
+  const [rides, target] = await Promise.all([
     getDashboardRides(year),
-    getAvailableYears(),
     getYearlyTarget(year),
   ]);
 
@@ -26,11 +32,13 @@ export default async function DashboardPage({
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <div className="flex items-center gap-2">
           <TargetEditor year={year} target={target} />
-          <YearSelector years={availableYears} current={year} />
+          {availableYears.length > 0 && (
+            <YearSelector years={availableYears} current={year} />
+          )}
         </div>
       </div>
       <Suspense>
-        <DashboardCards rides={rides} year={year} target={target} />
+        <DashboardCards rides={rides} year={year} target={target} hasRidesAnyYear={availableYears.length > 0} />
       </Suspense>
     </div>
   );
