@@ -21,6 +21,7 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --color-accent-secondary: var(--accent-secondary);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
 }
 
