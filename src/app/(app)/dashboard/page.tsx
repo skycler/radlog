@@ -31,7 +31,7 @@ export default async function DashboardPage({
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <div className="flex items-center gap-2">
-          <TargetEditor year={year} target={target} />
+          <TargetEditor key={year} year={year} target={target} />
           {availableYears.length > 0 && (
             <YearSelector years={availableYears} current={year} />
           )}
