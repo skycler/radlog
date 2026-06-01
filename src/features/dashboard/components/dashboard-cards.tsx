@@ -31,6 +31,9 @@ interface Props {
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const ACCENT = "var(--accent)";
+
+const fmtDate = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const SECONDARY = "var(--accent-secondary)";
 const CENTER = 5.5;
 const SIGMA_MIN = 0.7;
@@ -62,7 +65,7 @@ export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) 
       elevation: 0,
     }));
     for (const r of rides) {
-      const m = new Date(r.date).getMonth();
+      const m = parseInt(r.date.slice(5, 7), 10) - 1;
       months[m].rides++;
       months[m].km += r.distance_km;
       months[m].elevation += r.elevation_gain_m;
@@ -306,7 +309,7 @@ export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) 
         x: "date",
         y: "cumulativeKm",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.cumulativeKm).toLocaleString()} km total${d.dailyKm > 0 ? `\n${Math.round(d.dailyKm)} km today` : ""}`,
+        title: (d: any) => `${fmtDate(d.date)}\n${Math.round(d.cumulativeKm).toLocaleString()} km total${d.dailyKm > 0 ? `\n${Math.round(d.dailyKm)} km today` : ""}`,
       })),
       Plot.ruleY([0]),
       Plot.axisY({ anchor: "left", label: "cumulative km" }),
@@ -344,7 +347,7 @@ export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) 
         x: "date",
         y: "dailyKm",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        title: (d: any) => `${d.date.toISOString().slice(0, 10)}\n${Math.round(d.dailyKm)} km`,
+        title: (d: any) => `${fmtDate(d.date)}\n${Math.round(d.dailyKm)} km`,
       })),
       Plot.ruleY([0]),
       Plot.axisY({ anchor: "left", label: "daily km", labelAnchor: "bottom", labelOffset: 45 }),
