@@ -269,6 +269,23 @@ export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) 
 
   const dailyBars = useMemo(() => timelineData.filter((d) => d.dailyKm > 0), [timelineData]);
 
+  const rolling7dSum = useMemo(() => {
+    // Rolling 7-day sum
+    const sums = timelineData.map((d, i) => {
+      const start = Math.max(0, i - 6);
+      const window = timelineData.slice(start, i + 1);
+      return { date: d.date, sum: window.reduce((s, w) => s + w.dailyKm, 0) };
+    });
+    // Smooth with a 7-day rolling average
+    return sums.map((d, i) => {
+      const start = Math.max(0, i - 3);
+      const end = Math.min(sums.length - 1, i + 3);
+      let total = 0;
+      for (let j = start; j <= end; j++) total += sums[j].sum;
+      return { date: d.date, sum: total / (end - start + 1) };
+    });
+  }, [timelineData]);
+
   const xDomain = useMemo(() => [new Date(year, 0, 1), new Date(year, 11, 31)] as [Date, Date], [year]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -345,6 +362,13 @@ export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) 
         fill: SECONDARY,
         fillOpacity: 0.7,
       }),
+      Plot.lineY(rolling7dSum, {
+        x: "date",
+        y: "sum",
+        stroke: "var(--foreground)",
+        strokeWidth: 1.5,
+        strokeOpacity: 0.4,
+      }),
       Plot.tip(dailyBars, Plot.pointerX({
         x: "date",
         y: "dailyKm",
@@ -354,7 +378,7 @@ export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) 
       Plot.ruleY([0]),
       Plot.axisY({ anchor: "left", label: "daily km", labelAnchor: "bottom", labelOffset: 45 }),
     ],
-  }), [dailyBars, xDomain]);
+  }), [dailyBars, rolling7dSum, xDomain]);
 
   if (rides.length === 0) {
     return (
@@ -401,6 +425,10 @@ export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) 
           <span className="flex items-center gap-1">
             <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SECONDARY, opacity: 0.7 }} />
             Daily km
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block w-3 h-0.5 bg-foreground/40" />
+            Weekly km
           </span>
           {target && (
             <span className="flex items-center gap-1">
