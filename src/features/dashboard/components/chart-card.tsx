@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, type ReactNode } from "react";
+import { useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { MaximizeIcon, XMarkIcon } from "@/components/ui/icons";
 
 interface ChartCardProps {
@@ -12,6 +12,17 @@ interface ChartCardProps {
 
 export function ChartCard({ title, children, className = "" }: ChartCardProps) {
   const [maximized, setMaximized] = useState(false);
+  const [ratio, setRatio] = useState(16 / 9);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const open = useCallback(() => {
+    const el = cardRef.current;
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      if (rect.height > 0) setRatio(rect.width / rect.height);
+    }
+    setMaximized(true);
+  }, []);
 
   const close = useCallback(() => setMaximized(false), []);
 
@@ -28,49 +39,67 @@ export function ChartCard({ title, children, className = "" }: ChartCardProps) {
     };
   }, [maximized, close]);
 
-  if (maximized) {
-    return (
-      <>
-        {/* Placeholder so layout doesn't collapse */}
-        <div className="rounded-md border border-foreground/10 p-4 invisible" aria-hidden>
+  return (
+    <>
+      {/* Placeholder so layout doesn't collapse when card goes fixed */}
+      {maximized && (
+        <div
+          key="placeholder"
+          className="rounded-md border border-foreground/10 p-4 invisible"
+          aria-hidden
+        >
           <div className="h-[200px]" />
         </div>
-        {/* Overlay */}
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={close}>
-          <div
-            className="relative w-[90vw] max-w-5xl max-h-[90vh] overflow-auto rounded-lg border border-foreground/10 bg-background p-6 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-foreground/60">{title}</h3>
-              <button
-                onClick={close}
-                className="p-1 rounded hover:bg-foreground/10 text-foreground/50 hover:text-foreground transition-colors"
-                title="Close"
-              >
-                <XMarkIcon />
-              </button>
-            </div>
-            <div className={className}>{children}</div>
-          </div>
-        </div>
-      </>
-    );
-  }
+      )}
 
-  return (
-    <div className="rounded-md border border-foreground/10 p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-foreground/60">{title}</h3>
-        <button
-          onClick={() => setMaximized(true)}
-          className="p-1 rounded hover:bg-foreground/10 text-foreground/30 hover:text-foreground/60 transition-colors"
-          title="Maximize"
+      {/* Backdrop */}
+      {maximized && (
+        <div
+          key="backdrop"
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+          onClick={close}
+        />
+      )}
+
+      {/* Card — same element in both states so children don't remount */}
+      <div
+        key="card"
+        ref={cardRef}
+        className={
+          maximized
+            ? "fixed z-50 overflow-auto rounded-lg border border-foreground/10 bg-background p-6 shadow-xl"
+            : "rounded-md border border-foreground/10 p-4"
+        }
+        style={
+          maximized
+            ? {
+                width: `min(calc(100vw - 2rem), calc((100vh - 2rem) * ${ratio}))`,
+                height: `min(calc(100vh - 2rem), calc((100vw - 2rem) / ${ratio}))`,
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              }
+            : undefined
+        }
+      >
+        <div
+          className={`flex items-center justify-between ${maximized ? "mb-4" : "mb-3"}`}
         >
-          <MaximizeIcon />
-        </button>
+          <h3 className="text-sm font-semibold text-foreground/60">{title}</h3>
+          <button
+            onClick={maximized ? close : open}
+            className={`p-1 rounded hover:bg-foreground/10 transition-colors ${
+              maximized
+                ? "text-foreground/50 hover:text-foreground"
+                : "text-foreground/30 hover:text-foreground/60"
+            }`}
+            title={maximized ? "Close" : "Maximize"}
+          >
+            {maximized ? <XMarkIcon /> : <MaximizeIcon />}
+          </button>
+        </div>
+        <div className={className}>{children}</div>
       </div>
-      <div className={className}>{children}</div>
-    </div>
+    </>
   );
 }
