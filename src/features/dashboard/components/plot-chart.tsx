@@ -11,6 +11,7 @@ interface PlotChartProps {
 export function PlotChart({ buildOptions, className = "" }: PlotChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number | undefined>(undefined);
+  const baseWidthRef = useRef<number | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -18,7 +19,9 @@ export function PlotChart({ buildOptions, className = "" }: PlotChartProps) {
 
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setWidth(entry.contentRect.width);
+        const w = entry.contentRect.width;
+        if (baseWidthRef.current === null) baseWidthRef.current = w;
+        setWidth(w);
       }
     });
     observer.observe(container);
@@ -34,9 +37,17 @@ export function PlotChart({ buildOptions, className = "" }: PlotChartProps) {
     import("@observablehq/plot").then((Plot) => {
       if (cancelled) return;
       const options = buildOptions(Plot);
+      const scale =
+        baseWidthRef.current && baseWidthRef.current > 0
+          ? width / baseWidthRef.current
+          : 1;
+      const height = options.height
+        ? Math.round(options.height * scale)
+        : undefined;
       const plot = Plot.plot({
         ...options,
         width,
+        height: height ?? options.height,
         style: {
           background: "transparent",
           color: "currentColor",
