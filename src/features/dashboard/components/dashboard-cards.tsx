@@ -77,18 +77,20 @@ export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) 
     const start = new Date(year, 0, 1);
     const now = new Date();
     const end = year === now.getFullYear() ? now : new Date(year, 11, 31);
-    const dayMap = new Map<string, number>();
+    const dayMap = new Map<string, { km: number; rides: number }>();
     for (const r of rides) {
-      dayMap.set(r.date, (dayMap.get(r.date) || 0) + r.distance_km);
+      const prev = dayMap.get(r.date);
+      dayMap.set(r.date, prev ? { km: prev.km + r.distance_km, rides: prev.rides + 1 } : { km: r.distance_km, rides: 1 });
     }
-    const days: { date: Date; dailyKm: number; cumulativeKm: number }[] = [];
+    const days: { date: Date; dailyKm: number; cumulativeKm: number; rideCount: number }[] = [];
     let cumulative = 0;
     const current = new Date(start);
     while (current <= end) {
       const key = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}-${String(current.getDate()).padStart(2, '0')}`;
-      const daily = dayMap.get(key) || 0;
+      const entry = dayMap.get(key);
+      const daily = entry?.km || 0;
       cumulative += daily;
-      days.push({ date: new Date(current), dailyKm: daily, cumulativeKm: cumulative });
+      days.push({ date: new Date(current), dailyKm: daily, cumulativeKm: cumulative, rideCount: entry?.rides || 0 });
       current.setDate(current.getDate() + 1);
     }
     return days;
@@ -309,7 +311,7 @@ export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) 
         x: "date",
         y: "cumulativeKm",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        title: (d: any) => `${fmtDate(d.date)}\n${Math.round(d.cumulativeKm).toLocaleString()} km total${d.dailyKm > 0 ? `\n${Math.round(d.dailyKm)} km today` : ""}`,
+        title: (d: any) => `${fmtDate(d.date)}\n${Math.round(d.cumulativeKm).toLocaleString()} km total${d.dailyKm > 0 ? `\n${Math.round(d.dailyKm)} km today${d.rideCount > 1 ? ` (${d.rideCount} rides)` : ""}` : ""}`,
       })),
       Plot.ruleY([0]),
       Plot.axisY({ anchor: "left", label: "cumulative km" }),
@@ -347,7 +349,7 @@ export function DashboardCards({ rides, year, target, hasRidesAnyYear }: Props) 
         x: "date",
         y: "dailyKm",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        title: (d: any) => `${fmtDate(d.date)}\n${Math.round(d.dailyKm)} km`,
+        title: (d: any) => `${fmtDate(d.date)}\n${Math.round(d.dailyKm)} km${d.rideCount > 1 ? ` (${d.rideCount} rides)` : ""}`,
       })),
       Plot.ruleY([0]),
       Plot.axisY({ anchor: "left", label: "daily km", labelAnchor: "bottom", labelOffset: 45 }),
